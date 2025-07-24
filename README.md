@@ -1,6 +1,6 @@
 SnipSwap is a platform that makes privacy effortless—for everyone—from the crypto-native dev to your grandma who just wants to text without Big Tech listening.
 
-Blockchain gives us Decentralized P2P networks while Privacy is the frictionless right to exist without being scraped, scored, or sold. SnipSwap bridges the world into the technilogy of thr future...a future where privacy is valued more than the illusion of conviencance cloaked under the shadow of control. 
+Blockchain gives us Decentralized P2P networks while Privacy is the frictionless right to exist without being scraped, scored, or sold. SnipSwap bridges the other % into the tech of the future...a future where privacy is valued more than the illusion of conviencance cloaked under the shadow of control. 
 
 When people can speak, store, trade, and connect—**without fear**—conflict loses its fuel. Misinformation can't be amplified at scale. Manipulation collapses. Control shifts back to the individual.
 
