@@ -1,1 +1,19 @@
+name: CI
 
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - run: cargo fmt --all --check
+      - run: cargo clippy --all-features -- -D warnings
+      - run: cargo test --all-features
+
+      - uses: rustsec/audit-check@v1
