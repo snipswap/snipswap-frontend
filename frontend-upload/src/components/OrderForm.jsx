@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 
+// Use environment variable for API base URL, fallback to Railway backend
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://snipswap-dex-production.up.railway.app';
+
 const CHAINS = [
   { label: 'Secret', value: 'secret' },
   { label: 'Osmosis', value: 'osmosis' },
@@ -32,7 +35,7 @@ function OrderForm({ pair, side }) {
       if (targetChain) {
         payload.target_chain = targetChain;
       }
-      const res = await fetch('/api/orders/create', {
+      const res = await fetch(`${API_BASE_URL}/api/trading/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
