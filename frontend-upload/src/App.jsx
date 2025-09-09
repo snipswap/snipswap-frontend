@@ -4,7 +4,9 @@ import OrderForm from './components/OrderForm';
 import OrderBook from './components/OrderBook';
 import TradeList from './components/TradeList';
 
-const API_BASE = '/api/market';
+// Use environment variable for API base URL, fallback to Railway backend
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://snipswap-dex-production.up.railway.app';
+const API_BASE = `${API_BASE_URL}/api/market`;
 
 function App() {
   const [tradingPairs, setTradingPairs] = useState([]);
