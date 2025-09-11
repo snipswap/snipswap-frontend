@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, ComposedChart } from 'recharts';
 
 const ProfessionalTradingApp = () => {
   const [selectedPair, setSelectedPair] = useState('ATOM/USDC');
   const [orderType, setOrderType] = useState('limit');
   const [privacyMode, setPrivacyMode] = useState('private');
+  const [chartType, setChartType] = useState('line');
   const [priceData, setPriceData] = useState({});
   const [orderBook, setOrderBook] = useState({ bids: [], asks: [] });
   const [recentTrades, setRecentTrades] = useState([]);
   const [chartData, setChartData] = useState([]);
+  const [candlestickData, setCandlestickData] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
 
@@ -42,6 +44,7 @@ const ProfessionalTradingApp = () => {
           updateOrderBook();
           updateRecentTrades();
           updateChartData();
+          updateCandlestickData();
         }, 1000);
 
         return () => clearInterval(interval);
@@ -125,6 +128,45 @@ const ProfessionalTradingApp = () => {
     };
 
     setChartData(prev => [...prev.slice(-99), newDataPoint]);
+  };
+
+  const updateCandlestickData = () => {
+    const currentPrice = priceData[selectedPair]?.price || tradingPairs.find(p => p.symbol === selectedPair)?.price || 4.5989;
+    
+    setCandlestickData(prev => {
+      if (prev.length === 0) {
+        // Initialize with some data
+        const initialData = [];
+        for (let i = 0; i < 20; i++) {
+          const basePrice = currentPrice * (1 + (Math.random() - 0.5) * 0.02);
+          const open = basePrice;
+          const close = basePrice * (1 + (Math.random() - 0.5) * 0.01);
+          const high = Math.max(open, close) * (1 + Math.random() * 0.005);
+          const low = Math.min(open, close) * (1 - Math.random() * 0.005);
+          
+          initialData.push({
+            time: Date.now() - (20 - i) * 60000,
+            open,
+            high,
+            low,
+            close,
+            volume: Math.random() * 1000000
+          });
+        }
+        return initialData;
+      }
+      
+      // Update the last candle
+      const updated = [...prev];
+      const lastCandle = { ...updated[updated.length - 1] };
+      lastCandle.close = currentPrice;
+      lastCandle.high = Math.max(lastCandle.high, currentPrice);
+      lastCandle.low = Math.min(lastCandle.low, currentPrice);
+      lastCandle.volume += Math.random() * 10000;
+      
+      updated[updated.length - 1] = lastCandle;
+      return updated;
+    });
   };
 
   const currentPair = tradingPairs.find(p => p.symbol === selectedPair);
@@ -256,8 +298,18 @@ const ProfessionalTradingApp = () => {
           <div className="chart-container">
             <div className="chart-header">
               <div className="chart-controls">
-                <button className="chart-type active">Line</button>
-                <button className="chart-type">Candles</button>
+                <button 
+                  className={`chart-type ${chartType === 'line' ? 'active' : ''}`}
+                  onClick={() => setChartType('line')}
+                >
+                  Line
+                </button>
+                <button 
+                  className={`chart-type ${chartType === 'candles' ? 'active' : ''}`}
+                  onClick={() => setChartType('candles')}
+                >
+                  Candles
+                </button>
                 <button className="chart-type">Depth</button>
               </div>
               
@@ -272,41 +324,74 @@ const ProfessionalTradingApp = () => {
             
             <div className="chart-area">
               <ResponsiveContainer width="100%" height={400}>
-                <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#00d4aa" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#00d4aa" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
-                  <XAxis 
-                    dataKey="time" 
-                    tickFormatter={(time) => new Date(time).toLocaleTimeString()}
-                    stroke="#888"
-                  />
-                  <YAxis 
-                    domain={['dataMin - 0.01', 'dataMax + 0.01']}
-                    tickFormatter={(value) => `$${value.toFixed(4)}`}
-                    stroke="#888"
-                  />
-                  <Tooltip 
-                    labelFormatter={(time) => new Date(time).toLocaleString()}
-                    formatter={(value) => [`$${value.toFixed(4)}`, 'Price']}
-                    contentStyle={{
-                      backgroundColor: '#1a1a1a',
-                      border: '1px solid #333',
-                      borderRadius: '8px'
-                    }}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="price" 
-                    stroke="#00d4aa" 
-                    strokeWidth={2}
-                    fill="url(#priceGradient)" 
-                  />
-                </AreaChart>
+                {chartType === 'line' ? (
+                  <AreaChart data={chartData}>
+                    <defs>
+                      <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#00d4aa" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#00d4aa" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
+                    <XAxis 
+                      dataKey="time" 
+                      tickFormatter={(time) => new Date(time).toLocaleTimeString()}
+                      stroke="#888"
+                    />
+                    <YAxis 
+                      domain={['dataMin - 0.01', 'dataMax + 0.01']}
+                      tickFormatter={(value) => `$${value.toFixed(4)}`}
+                      stroke="#888"
+                    />
+                    <Tooltip 
+                      labelFormatter={(time) => new Date(time).toLocaleString()}
+                      formatter={(value) => [`$${value.toFixed(4)}`, 'Price']}
+                      contentStyle={{
+                        backgroundColor: '#1a1a1a',
+                        border: '1px solid #333',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="price" 
+                      stroke="#00d4aa" 
+                      strokeWidth={2}
+                      fill="url(#priceGradient)" 
+                    />
+                  </AreaChart>
+                ) : (
+                  <ComposedChart data={candlestickData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
+                    <XAxis 
+                      dataKey="time" 
+                      tickFormatter={(time) => new Date(time).toLocaleTimeString()}
+                      stroke="#888"
+                    />
+                    <YAxis 
+                      domain={['dataMin - 0.01', 'dataMax + 0.01']}
+                      tickFormatter={(value) => `$${value.toFixed(4)}`}
+                      stroke="#888"
+                    />
+                    <Tooltip 
+                      labelFormatter={(time) => new Date(time).toLocaleString()}
+                      formatter={(value, name) => [`$${value.toFixed(4)}`, name.toUpperCase()]}
+                      contentStyle={{
+                        backgroundColor: '#1a1a1a',
+                        border: '1px solid #333',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Bar dataKey="high" fill="transparent" />
+                    <Line 
+                      type="monotone" 
+                      dataKey="close" 
+                      stroke="#00d4aa" 
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                  </ComposedChart>
+                )}
               </ResponsiveContainer>
             </div>
           </div>
