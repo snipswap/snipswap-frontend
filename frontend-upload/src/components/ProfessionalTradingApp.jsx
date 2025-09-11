@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, ComposedChart } from 'recharts';
+import CandlestickChart from './CandlestickChart.jsx';
 
 const ProfessionalTradingApp = () => {
   const [selectedPair, setSelectedPair] = useState('ATOM/USDC');
@@ -135,36 +136,79 @@ const ProfessionalTradingApp = () => {
     
     setCandlestickData(prev => {
       if (prev.length === 0) {
-        // Initialize with some data
+        // Initialize with realistic candlestick data
         const initialData = [];
-        for (let i = 0; i < 20; i++) {
-          const basePrice = currentPrice * (1 + (Math.random() - 0.5) * 0.02);
-          const open = basePrice;
-          const close = basePrice * (1 + (Math.random() - 0.5) * 0.01);
-          const high = Math.max(open, close) * (1 + Math.random() * 0.005);
-          const low = Math.min(open, close) * (1 - Math.random() * 0.005);
+        let lastClose = currentPrice;
+        
+        for (let i = 0; i < 50; i++) {
+          // Create realistic price movement
+          const volatility = 0.005; // 0.5% volatility
+          const trend = (Math.random() - 0.5) * 0.002; // Small trend
+          
+          const open = lastClose;
+          const priceChange = (Math.random() - 0.5) * volatility + trend;
+          const close = open * (1 + priceChange);
+          
+          // High and low should encompass open and close with some extra range
+          const maxPrice = Math.max(open, close);
+          const minPrice = Math.min(open, close);
+          const extraRange = Math.abs(close - open) * 0.5 + volatility * 0.3;
+          
+          const high = maxPrice + (Math.random() * extraRange);
+          const low = minPrice - (Math.random() * extraRange);
           
           initialData.push({
-            time: Date.now() - (20 - i) * 60000,
-            open,
-            high,
-            low,
-            close,
-            volume: Math.random() * 1000000
+            time: Date.now() - (50 - i) * 60000, // 1 minute intervals
+            open: parseFloat(open.toFixed(4)),
+            high: parseFloat(high.toFixed(4)),
+            low: parseFloat(low.toFixed(4)),
+            close: parseFloat(close.toFixed(4)),
+            volume: Math.floor(Math.random() * 1000000) + 100000
           });
+          
+          lastClose = close;
         }
         return initialData;
       }
       
-      // Update the last candle
+      // Update the last candle with new price data
       const updated = [...prev];
       const lastCandle = { ...updated[updated.length - 1] };
-      lastCandle.close = currentPrice;
-      lastCandle.high = Math.max(lastCandle.high, currentPrice);
-      lastCandle.low = Math.min(lastCandle.low, currentPrice);
-      lastCandle.volume += Math.random() * 10000;
+      
+      // Simulate realistic price movement within the candle
+      const priceVariation = (Math.random() - 0.5) * 0.001;
+      const newPrice = currentPrice * (1 + priceVariation);
+      
+      lastCandle.close = parseFloat(newPrice.toFixed(4));
+      lastCandle.high = Math.max(lastCandle.high, newPrice);
+      lastCandle.low = Math.min(lastCandle.low, newPrice);
+      lastCandle.volume += Math.floor(Math.random() * 10000);
       
       updated[updated.length - 1] = lastCandle;
+      
+      // Occasionally add a new candle (every ~30 updates)
+      if (Math.random() < 0.03) {
+        const open = lastCandle.close;
+        const priceChange = (Math.random() - 0.5) * 0.005;
+        const close = open * (1 + priceChange);
+        const maxPrice = Math.max(open, close);
+        const minPrice = Math.min(open, close);
+        const extraRange = Math.abs(close - open) * 0.5 + 0.001;
+        
+        const newCandle = {
+          time: Date.now(),
+          open: parseFloat(open.toFixed(4)),
+          high: parseFloat((maxPrice + Math.random() * extraRange).toFixed(4)),
+          low: parseFloat((minPrice - Math.random() * extraRange).toFixed(4)),
+          close: parseFloat(close.toFixed(4)),
+          volume: Math.floor(Math.random() * 1000000) + 100000
+        };
+        
+        updated.push(newCandle);
+        // Keep only last 50 candles
+        return updated.slice(-50);
+      }
+      
       return updated;
     });
   };
@@ -361,36 +405,7 @@ const ProfessionalTradingApp = () => {
                     />
                   </AreaChart>
                 ) : (
-                  <ComposedChart data={candlestickData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
-                    <XAxis 
-                      dataKey="time" 
-                      tickFormatter={(time) => new Date(time).toLocaleTimeString()}
-                      stroke="#888"
-                    />
-                    <YAxis 
-                      domain={['dataMin - 0.01', 'dataMax + 0.01']}
-                      tickFormatter={(value) => `$${value.toFixed(4)}`}
-                      stroke="#888"
-                    />
-                    <Tooltip 
-                      labelFormatter={(time) => new Date(time).toLocaleString()}
-                      formatter={(value, name) => [`$${value.toFixed(4)}`, name.toUpperCase()]}
-                      contentStyle={{
-                        backgroundColor: '#1a1a1a',
-                        border: '1px solid #333',
-                        borderRadius: '8px'
-                      }}
-                    />
-                    <Bar dataKey="high" fill="transparent" />
-                    <Line 
-                      type="monotone" 
-                      dataKey="close" 
-                      stroke="#00d4aa" 
-                      strokeWidth={2}
-                      dot={false}
-                    />
-                  </ComposedChart>
+                  <CandlestickChart data={candlestickData} />
                 )}
               </ResponsiveContainer>
             </div>
