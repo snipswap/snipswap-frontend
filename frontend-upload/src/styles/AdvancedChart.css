@@ -1,0 +1,228 @@
+/* Advanced Trading Chart Styles */
+
+.advanced-trading-chart {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.indicators-toolbar {
+  display: flex;
+  gap: 20px;
+  padding: 8px 12px;
+  background: rgba(26, 26, 26, 0.8);
+  border-bottom: 1px solid #333;
+  border-radius: 8px 8px 0 0;
+  flex-wrap: wrap;
+}
+
+.indicator-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.group-label {
+  font-size: 11px;
+  color: #888;
+  font-weight: 500;
+  margin-right: 4px;
+}
+
+.indicator-btn {
+  background: transparent;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.indicator-btn:hover {
+  border-color: #555;
+  color: #fff;
+}
+
+.indicator-btn.active {
+  background: #00d4aa;
+  border-color: #00d4aa;
+  color: #000;
+  font-weight: 500;
+}
+
+.main-chart-container {
+  flex: 1;
+  min-height: 300px;
+  background: #0b0e11;
+  position: relative;
+}
+
+.indicator-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: #333;
+}
+
+.indicator-panel {
+  background: #0b0e11;
+  border-top: 1px solid #333;
+}
+
+.panel-header {
+  background: rgba(26, 26, 26, 0.8);
+  padding: 6px 12px;
+  font-size: 11px;
+  color: #888;
+  font-weight: 500;
+  border-bottom: 1px solid #333;
+}
+
+/* Chart Type Controls Enhancement */
+.chart-controls {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.chart-type {
+  background: transparent;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.chart-type:hover {
+  border-color: #555;
+  color: #fff;
+}
+
+.chart-type.active {
+  background: #f0b90b;
+  border-color: #f0b90b;
+  color: #000;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .indicators-toolbar {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .indicator-group {
+    flex-wrap: wrap;
+  }
+  
+  .chart-controls {
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+  
+  .chart-type {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  
+  .indicator-btn {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+}
+
+/* Custom Scrollbar for Indicator Panels */
+.indicator-panels::-webkit-scrollbar {
+  width: 4px;
+}
+
+.indicator-panels::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.indicator-panels::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 2px;
+}
+
+.indicator-panels::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Animation for Indicator Activation */
+.indicator-btn.active {
+  animation: indicatorActivate 0.3s ease;
+}
+
+@keyframes indicatorActivate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Tooltip Enhancements */
+.recharts-tooltip-wrapper {
+  z-index: 1000;
+}
+
+.recharts-tooltip-content {
+  background: rgba(26, 26, 26, 0.95) !important;
+  border: 1px solid #333 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* Reference Lines Styling */
+.recharts-reference-line {
+  opacity: 0.7;
+}
+
+/* Chart Container Enhancements */
+.chart-area {
+  background: linear-gradient(135deg, #0b0e11 0%, #1a1a1a 100%);
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+
+/* Loading State */
+.chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #888;
+  font-size: 14px;
+}
+
+.chart-loading::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid #333;
+  border-top: 2px solid #00d4aa;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+

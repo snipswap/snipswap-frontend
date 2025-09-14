@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, ComposedChart } from 'recharts';
 import CandlestickChart from './CandlestickChart.jsx';
+import AdvancedTradingChart from './AdvancedTradingChart.jsx';
 
 const ProfessionalTradingApp = () => {
   const [selectedPair, setSelectedPair] = useState('ATOM/USDC');
@@ -349,12 +350,35 @@ const ProfessionalTradingApp = () => {
                   Line
                 </button>
                 <button 
-                  className={`chart-type ${chartType === 'candles' ? 'active' : ''}`}
-                  onClick={() => setChartType('candles')}
+                  className={`chart-type ${chartType === 'candlestick' ? 'active' : ''}`}
+                  onClick={() => setChartType('candlestick')}
                 >
                   Candles
                 </button>
-                <button className="chart-type">Depth</button>
+                <button 
+                  className={`chart-type ${chartType === 'area' ? 'active' : ''}`}
+                  onClick={() => setChartType('area')}
+                >
+                  Area
+                </button>
+                <button 
+                  className={`chart-type ${chartType === 'ohlc' ? 'active' : ''}`}
+                  onClick={() => setChartType('ohlc')}
+                >
+                  OHLC
+                </button>
+                <button 
+                  className={`chart-type ${chartType === 'heikin-ashi' ? 'active' : ''}`}
+                  onClick={() => setChartType('heikin-ashi')}
+                >
+                  Heikin Ashi
+                </button>
+                <button 
+                  className={`chart-type ${chartType === 'depth' ? 'active' : ''}`}
+                  onClick={() => setChartType('depth')}
+                >
+                  Depth
+                </button>
               </div>
               
               <div className="timeframe-controls">
@@ -367,47 +391,11 @@ const ProfessionalTradingApp = () => {
             </div>
             
             <div className="chart-area">
-              <ResponsiveContainer width="100%" height={400}>
-                {chartType === 'line' ? (
-                  <AreaChart data={chartData}>
-                    <defs>
-                      <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#00d4aa" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#00d4aa" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
-                    <XAxis 
-                      dataKey="time" 
-                      tickFormatter={(time) => new Date(time).toLocaleTimeString()}
-                      stroke="#888"
-                    />
-                    <YAxis 
-                      domain={['dataMin - 0.01', 'dataMax + 0.01']}
-                      tickFormatter={(value) => `$${value.toFixed(4)}`}
-                      stroke="#888"
-                    />
-                    <Tooltip 
-                      labelFormatter={(time) => new Date(time).toLocaleString()}
-                      formatter={(value) => [`$${value.toFixed(4)}`, 'Price']}
-                      contentStyle={{
-                        backgroundColor: '#1a1a1a',
-                        border: '1px solid #333',
-                        borderRadius: '8px'
-                      }}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="price" 
-                      stroke="#00d4aa" 
-                      strokeWidth={2}
-                      fill="url(#priceGradient)" 
-                    />
-                  </AreaChart>
-                ) : (
-                  <CandlestickChart data={candlestickData} />
-                )}
-              </ResponsiveContainer>
+              <AdvancedTradingChart 
+                data={candlestickData} 
+                chartType={chartType} 
+                selectedPair={selectedPair}
+              />
             </div>
           </div>
 
