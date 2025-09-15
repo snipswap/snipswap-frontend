@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, ComposedChart } from 'recharts';
 import CandlestickChart from './CandlestickChart.jsx';
 import AdvancedTradingChart from './AdvancedTradingChart.jsx';
+import PrivacyEnhancedTradingForm from './PrivacyEnhancedTradingForm.jsx';
 import realTimeOracle from '../services/realTimeOracle.js';
 
 const ProfessionalTradingApp = () => {
@@ -236,6 +237,34 @@ const ProfessionalTradingApp = () => {
     } catch (error) {
       console.error('❌ Failed to load data for new pair:', error);
     }
+  };
+
+  // Handle trade submission from privacy-enhanced form
+  const handleTrade = (tradeData) => {
+    console.log('🚀 Executing privacy-enhanced trade:', tradeData);
+    
+    // Add trade to recent trades
+    const newTrade = {
+      id: Date.now(),
+      price: tradeData.price,
+      amount: tradeData.amount,
+      time: new Date().toLocaleTimeString(),
+      side: tradeData.side,
+      privacyMode: tradeData.privacyMode,
+      fees: tradeData.fees,
+      mevProtected: tradeData.mevProtectionEnabled
+    };
+
+    setRecentTrades(prev => [newTrade, ...prev.slice(0, 19)]);
+    
+    // Update privacy streak if using private/stealth mode
+    if (tradeData.privacyMode !== 'public') {
+      const currentStreak = parseInt(localStorage.getItem('privacyStreak') || '0');
+      localStorage.setItem('privacyStreak', (currentStreak + 1).toString());
+    }
+    
+    // Show success notification (you could add a toast notification here)
+    console.log('✅ Trade executed successfully with privacy mode:', tradeData.privacyMode);
   };
 
   const updatePrices = () => {
@@ -599,119 +628,12 @@ const ProfessionalTradingApp = () => {
               <button className="tab-btn">Futures</button>
             </div>
 
-            <div className="trading-forms">
-              {/* Buy Form */}
-              <div className="trading-form buy-form">
-                <div className="form-header">
-                  <h4>Buy {selectedPair.split('/')[0]}</h4>
-                  <div className="balance">Balance: 1,234.56 USDC</div>
-                </div>
-
-                <div className="order-type-selector">
-                  <button 
-                    className={`order-type-btn ${orderType === 'limit' ? 'active' : ''}`}
-                    onClick={() => setOrderType('limit')}
-                  >
-                    Limit
-                  </button>
-                  <button 
-                    className={`order-type-btn ${orderType === 'market' ? 'active' : ''}`}
-                    onClick={() => setOrderType('market')}
-                  >
-                    Market
-                  </button>
-                </div>
-
-                <div className="form-fields">
-                  {orderType === 'limit' && (
-                    <div className="field">
-                      <label>Price (USDC)</label>
-                      <input 
-                        type="number" 
-                        placeholder="0.00"
-                        defaultValue={(currentPriceData.price || currentPair?.price || 0).toFixed(4)}
-                      />
-                    </div>
-                  )}
-                  
-                  <div className="field">
-                    <label>Amount ({selectedPair.split('/')[0]})</label>
-                    <input type="number" placeholder="0.00" />
-                  </div>
-
-                  <div className="percentage-buttons">
-                    {['25%', '50%', '75%', '100%'].map(pct => (
-                      <button key={pct} className="pct-btn">{pct}</button>
-                    ))}
-                  </div>
-
-                  <div className="field">
-                    <label>Total (USDC)</label>
-                    <input type="number" placeholder="0.00" />
-                  </div>
-                </div>
-
-                <button className="trade-btn buy-btn">
-                  Buy {selectedPair.split('/')[0]}
-                </button>
-              </div>
-
-              {/* Sell Form */}
-              <div className="trading-form sell-form">
-                <div className="form-header">
-                  <h4>Sell {selectedPair.split('/')[0]}</h4>
-                  <div className="balance">Balance: 12.34 {selectedPair.split('/')[0]}</div>
-                </div>
-
-                <div className="order-type-selector">
-                  <button 
-                    className={`order-type-btn ${orderType === 'limit' ? 'active' : ''}`}
-                    onClick={() => setOrderType('limit')}
-                  >
-                    Limit
-                  </button>
-                  <button 
-                    className={`order-type-btn ${orderType === 'market' ? 'active' : ''}`}
-                    onClick={() => setOrderType('market')}
-                  >
-                    Market
-                  </button>
-                </div>
-
-                <div className="form-fields">
-                  {orderType === 'limit' && (
-                    <div className="field">
-                      <label>Price (USDC)</label>
-                      <input 
-                        type="number" 
-                        placeholder="0.00"
-                        defaultValue={(currentPriceData.price || currentPair?.price || 0).toFixed(4)}
-                      />
-                    </div>
-                  )}
-                  
-                  <div className="field">
-                    <label>Amount ({selectedPair.split('/')[0]})</label>
-                    <input type="number" placeholder="0.00" />
-                  </div>
-
-                  <div className="percentage-buttons">
-                    {['25%', '50%', '75%', '100%'].map(pct => (
-                      <button key={pct} className="pct-btn">{pct}</button>
-                    ))}
-                  </div>
-
-                  <div className="field">
-                    <label>Total (USDC)</label>
-                    <input type="number" placeholder="0.00" />
-                  </div>
-                </div>
-
-                <button className="trade-btn sell-btn">
-                  Sell {selectedPair.split('/')[0]}
-                </button>
-              </div>
-            </div>
+            {/* Privacy-Enhanced Trading Form */}
+            <PrivacyEnhancedTradingForm
+              selectedPair={selectedPair}
+              priceData={priceData}
+              onTrade={handleTrade}
+            />
           </div>
         </div>
 

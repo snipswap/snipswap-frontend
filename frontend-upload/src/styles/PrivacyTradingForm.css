@@ -1,0 +1,491 @@
+/* Privacy Enhanced Trading Form Styles */
+
+.privacy-enhanced-trading-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+
+.trading-form-container {
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  flex: 1;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.order-type-selector {
+  display: flex;
+  background: rgba(15, 15, 15, 0.8);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.order-type-btn {
+  background: transparent;
+  border: none;
+  color: #ccc;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.order-type-btn:hover {
+  color: #fff;
+}
+
+.order-type-btn.active {
+  background: #f0b90b;
+  color: #000;
+  font-weight: 600;
+}
+
+.privacy-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(15, 15, 15, 0.8);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.privacy-icon {
+  font-size: 16px;
+}
+
+.privacy-name {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.mev-shield {
+  font-size: 14px;
+  animation: shield-glow 2s infinite;
+}
+
+@keyframes shield-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.trading-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.side-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.side-btn {
+  background: rgba(15, 15, 15, 0.8);
+  border: 2px solid #333;
+  color: #ccc;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.side-btn:hover {
+  border-color: #555;
+  color: #fff;
+}
+
+.side-btn.buy.active {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #10b981;
+  color: #fff;
+}
+
+.side-btn.sell.active {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group label {
+  color: #ccc;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper input {
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #fff;
+  padding: 12px 16px;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color 0.2s ease;
+}
+
+.input-wrapper input:focus {
+  outline: none;
+  border-color: #f0b90b;
+}
+
+.input-wrapper input::placeholder {
+  color: #666;
+}
+
+.input-suffix {
+  position: absolute;
+  right: 12px;
+  color: #888;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.advanced-options {
+  border-top: 1px solid #333;
+  padding-top: 16px;
+}
+
+.advanced-toggle {
+  background: transparent;
+  border: none;
+  color: #ccc;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+.advanced-toggle:hover {
+  color: #fff;
+}
+
+.advanced-content {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.slippage-selector {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.slippage-btn {
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slippage-btn:hover {
+  border-color: #555;
+  color: #fff;
+}
+
+.slippage-btn.active {
+  background: #f0b90b;
+  border-color: #f0b90b;
+  color: #000;
+}
+
+.slippage-input {
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  padding: 6px 8px;
+  font-size: 12px;
+  width: 60px;
+}
+
+.time-in-force-select {
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 12px;
+  width: 100%;
+}
+
+.time-in-force-select option {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-top: 2px;
+  accent-color: #f0b90b;
+}
+
+.checkbox-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: #ccc;
+  font-size: 12px;
+}
+
+.checkbox-description {
+  color: #888;
+  font-size: 11px;
+}
+
+.fee-breakdown {
+  background: rgba(15, 15, 15, 0.6);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.fee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  color: #ccc;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.privacy-savings {
+  color: #00d4aa;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.fee-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fee-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+}
+
+.fee-row span:first-child {
+  color: #888;
+}
+
+.fee-amount {
+  color: #ccc;
+}
+
+.fee-amount.strikethrough {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.fee-row.savings {
+  color: #00d4aa;
+}
+
+.fee-row.savings .fee-amount {
+  color: #00d4aa;
+  font-weight: 600;
+}
+
+.total-section {
+  background: rgba(240, 185, 11, 0.1);
+  border: 1px solid rgba(240, 185, 11, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-row span:first-child {
+  color: #f0b90b;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.total-amount {
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #f0b90b, #d97706);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.submit-btn:hover:not(.disabled) {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(240, 185, 11, 0.3);
+}
+
+.submit-btn.buy {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.submit-btn.buy:hover:not(.disabled) {
+  background: linear-gradient(135deg, #34d399, #10b981);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.submit-btn.sell {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.submit-btn.sell:hover:not(.disabled) {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.submit-btn.disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.privacy-badge {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .trading-form-container {
+    padding: 16px;
+  }
+  
+  .form-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .privacy-indicator {
+    justify-content: center;
+  }
+  
+  .side-selector {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  
+  .slippage-selector {
+    flex-wrap: wrap;
+  }
+  
+  .submit-btn {
+    padding: 14px;
+    font-size: 14px;
+  }
+}
+
+/* Animation for successful trade */
+.submit-btn.success {
+  animation: tradeSuccess 0.6s ease;
+}
+
+@keyframes tradeSuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Loading state for submit button */
+.submit-btn.loading {
+  position: relative;
+  color: transparent;
+}
+
+.submit-btn.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
