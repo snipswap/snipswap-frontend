@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, ComposedChart } from 'recharts';
 import CandlestickChart from './CandlestickChart.jsx';
 import AdvancedTradingChart from './AdvancedTradingChart.jsx';
+import realTimeOracle from '../services/realTimeOracle.js';
 
 const ProfessionalTradingApp = () => {
   const [selectedPair, setSelectedPair] = useState('ATOM/USDC');
@@ -14,6 +15,8 @@ const ProfessionalTradingApp = () => {
   const [chartData, setChartData] = useState([]);
   const [candlestickData, setCandlestickData] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
+  const [oracleStatus, setOracleStatus] = useState({ isConnected: false, lastUpdate: null });
+  const [realTimePrices, setRealTimePrices] = useState({});
   const wsRef = useRef(null);
 
   // Trading pairs focused on Cosmos ecosystem
@@ -34,30 +37,206 @@ const ProfessionalTradingApp = () => {
 
   // WebSocket connection for real-time data
   useEffect(() => {
-    const connectWebSocket = () => {
+    // Initialize real-time oracle connection
+    const initializeOracle = async () => {
       try {
-        // In production, this would connect to your WebSocket server
-        // For now, we'll simulate real-time updates
-        setIsConnected(true);
+        console.log('🚀 Initializing real-time oracle connection...');
         
-        // Simulate real-time price updates
-        const interval = setInterval(() => {
-          updatePrices();
-          updateOrderBook();
-          updateRecentTrades();
-          updateChartData();
-          updateCandlestickData();
-        }, 1000);
-
-        return () => clearInterval(interval);
+        // Subscribe to price updates
+        const unsubscribePrices = realTimeOracle.subscribe('priceUpdate', (data) => {
+          console.log('📊 Received price update:', data);
+          setRealTimePrices(data.prices || {});
+          updatePricesFromOracle(data.prices || {});
+          setIsConnected(true);
+        });
+        
+        // Subscribe to candle updates
+        const unsubscribeCandles = realTimeOracle.subscribe('candleUpdate', (data) => {
+          console.log('🕯️ Received candle update:', data);
+          updateCandlesFromOracle(data);
+        });
+        
+        // Get initial data
+        await loadInitialData();
+        
+        // Update oracle status
+        const status = realTimeOracle.getConnectionStatus();
+        setOracleStatus(status);
+        setIsConnected(status.isConnected);
+        
+        // Cleanup function
+        return () => {
+          unsubscribePrices();
+          unsubscribeCandles();
+        };
       } catch (error) {
-        console.error('WebSocket connection failed:', error);
+        console.error('❌ Failed to initialize oracle:', error);
         setIsConnected(false);
       }
     };
 
-    connectWebSocket();
+    initializeOracle();
   }, []);
+
+  // Load initial data from oracle
+  const loadInitialData = async () => {
+    try {
+      const selectedSymbol = selectedPair.split('/')[0]; // Get base symbol (e.g., 'ATOM' from 'ATOM/USDC')
+      
+      // Load candlestick data
+      const candles = await realTimeOracle.getCandlestickData(selectedSymbol);
+      if (candles && candles.length > 0) {
+        setCandlestickData(candles);
+        
+        // Convert to line chart data
+        const lineData = candles.map(candle => ({
+          time: candle.time,
+          price: candle.close,
+          volume: candle.volume
+        }));
+        setChartData(lineData);
+      }
+      
+      // Load current price data
+      const priceInfo = await realTimeOracle.getPriceData(selectedSymbol);
+      if (priceInfo) {
+        updatePricesFromOracle({ [selectedSymbol]: priceInfo });
+      }
+      
+    } catch (error) {
+      console.error('❌ Failed to load initial data:', error);
+    }
+  };
+
+  // Update prices from oracle data
+  const updatePricesFromOracle = (oraclePrices) => {
+    const newPrices = {};
+    
+    Object.entries(oraclePrices).forEach(([symbol, priceInfo]) => {
+      // Map oracle data to our price format
+      newPrices[`${symbol}/USDC`] = {
+        price: priceInfo.price || priceInfo,
+        change: priceInfo.change24h || 0,
+        volume: priceInfo.volume24h || 0,
+        high: priceInfo.high24h || priceInfo.price || priceInfo,
+        low: priceInfo.low24h || priceInfo.price || priceInfo,
+        confidence: priceInfo.confidence || 85,
+        sources: priceInfo.sources || [],
+        lastUpdate: priceInfo.lastUpdate || new Date().toISOString()
+      };
+    });
+    
+    setPriceData(prev => ({ ...prev, ...newPrices }));
+    
+    // Update order book with real prices
+    updateOrderBookFromPrices(newPrices);
+    
+    // Update recent trades
+    updateRecentTradesFromPrices(newPrices);
+  };
+
+  // Update candles from oracle data
+  const updateCandlesFromOracle = (candleData) => {
+    if (candleData && candleData.symbol) {
+      const symbol = `${candleData.symbol}/USDC`;
+      if (symbol === selectedPair) {
+        setCandlestickData(prev => {
+          const updated = [...prev];
+          const lastCandle = updated[updated.length - 1];
+          
+          if (lastCandle && lastCandle.time === candleData.time) {
+            // Update existing candle
+            updated[updated.length - 1] = candleData;
+          } else {
+            // Add new candle
+            updated.push(candleData);
+            // Keep only last 200 candles
+            return updated.slice(-200);
+          }
+          
+          return updated;
+        });
+      }
+    }
+  };
+
+  // Update order book based on real prices
+  const updateOrderBookFromPrices = (prices) => {
+    const currentPriceData = prices[selectedPair];
+    if (!currentPriceData) return;
+    
+    const currentPrice = currentPriceData.price;
+    const spread = currentPrice * 0.001; // 0.1% spread
+    
+    const bids = Array.from({ length: 15 }, (_, i) => ({
+      price: currentPrice - (spread * (i + 1)),
+      amount: Math.random() * 1000 + 100,
+      total: 0
+    }));
+
+    const asks = Array.from({ length: 15 }, (_, i) => ({
+      price: currentPrice + (spread * (i + 1)),
+      amount: Math.random() * 1000 + 100,
+      total: 0
+    }));
+
+    // Calculate cumulative totals
+    let bidTotal = 0;
+    bids.forEach(bid => {
+      bidTotal += bid.amount;
+      bid.total = bidTotal;
+    });
+
+    let askTotal = 0;
+    asks.forEach(ask => {
+      askTotal += ask.amount;
+      ask.total = askTotal;
+    });
+
+    setOrderBook({ bids, asks });
+  };
+
+  // Update recent trades from real prices
+  const updateRecentTradesFromPrices = (prices) => {
+    const currentPriceData = prices[selectedPair];
+    if (!currentPriceData) return;
+    
+    // Simulate realistic trades based on real price
+    if (Math.random() < 0.3) { // 30% chance to add a new trade
+      const newTrade = {
+        id: Date.now(),
+        price: currentPriceData.price * (1 + (Math.random() - 0.5) * 0.002),
+        amount: Math.random() * 100 + 10,
+        time: new Date().toLocaleTimeString(),
+        side: Math.random() > 0.5 ? 'buy' : 'sell'
+      };
+
+      setRecentTrades(prev => [newTrade, ...prev.slice(0, 19)]);
+    }
+  };
+
+  // Handle pair selection change
+  const handlePairChange = async (newPair) => {
+    setSelectedPair(newPair);
+    
+    // Load data for new pair
+    const symbol = newPair.split('/')[0];
+    try {
+      const candles = await realTimeOracle.getCandlestickData(symbol);
+      if (candles && candles.length > 0) {
+        setCandlestickData(candles);
+        
+        const lineData = candles.map(candle => ({
+          time: candle.time,
+          price: candle.close,
+          volume: candle.volume
+        }));
+        setChartData(lineData);
+      }
+    } catch (error) {
+      console.error('❌ Failed to load data for new pair:', error);
+    }
+  };
 
   const updatePrices = () => {
     const newPrices = {};
@@ -264,34 +443,47 @@ const ProfessionalTradingApp = () => {
             <h3>Markets</h3>
             <div className="market-filter">
               <button className="filter-btn active">Cosmos</button>
-              <button className="filter-btn">All</button>
-            </div>
-          </div>
-          
-          <div className="pairs-list">
-            {tradingPairs.map(pair => (
-              <div
-                key={pair.symbol}
-                className={`pair-item ${selectedPair === pair.symbol ? 'selected' : ''}`}
-                onClick={() => setSelectedPair(pair.symbol)}
-              >
-                <div className="pair-info">
-                  <span className="pair-icon">{pair.icon}</span>
-                  <div className="pair-details">
-                    <div className="pair-symbol">{pair.symbol}</div>
-                    <div className="pair-name">{pair.name}</div>
+            {tradingPairs.map(pair => {
+              const pairData = priceData[pair.symbol] || {};
+              const isSelected = selectedPair === pair.symbol;
+              const confidence = pairData.confidence || 0;
+              const sources = pairData.sources || [];
+              
+              return (
+                <div 
+                  key={pair.symbol} 
+                  className={`market-item ${isSelected ? 'selected' : ''}`}
+                  onClick={() => handlePairChange(pair.symbol)}
+                >
+                  <div className="market-info">
+                    <div className="market-symbol">
+                      <span className="base">{pair.base}</span>
+                      <span className="quote">/{pair.quote}</span>
+                    </div>
+                    <div className="market-name">{pair.name}</div>
+                  </div>
+                  <div className="market-data">
+                    <div className="price">
+                      ${pairData.price ? pairData.price.toFixed(4) : '0.0000'}
+                    </div>
+                    <div className={`change ${(pairData.change || 0) >= 0 ? 'positive' : 'negative'}`}>
+                      {(pairData.change || 0) >= 0 ? '+' : ''}{(pairData.change || 0).toFixed(2)}%
+                    </div>
+                    <div className="oracle-info">
+                      <div className="confidence">
+                        <span className="confidence-dot" style={{
+                          backgroundColor: confidence >= 80 ? '#4ade80' : confidence >= 60 ? '#fbbf24' : '#f87171'
+                        }}></span>
+                        {confidence.toFixed(0)}%
+                      </div>
+                      <div className="sources-count">
+                        {sources.length} sources
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="pair-price">
-                  <div className="price">${(priceData[pair.symbol]?.price || pair.price).toFixed(4)}</div>
-                  <div className={`change ${(priceData[pair.symbol]?.change || pair.change) >= 0 ? 'positive' : 'negative'}`}>
-                    {(priceData[pair.symbol]?.change || pair.change) >= 0 ? '+' : ''}{(priceData[pair.symbol]?.change || pair.change).toFixed(2)}%
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+              );
+            })}    </div>
 
         {/* Center - Chart and Trading */}
         <div className="trading-center">
