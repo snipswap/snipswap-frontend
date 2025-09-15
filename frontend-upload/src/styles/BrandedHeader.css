@@ -1,0 +1,388 @@
+/* Branded Header Styles */
+
+.branded-header {
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(15, 15, 15, 0.95));
+  border-bottom: 1px solid #333;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.logo-container:hover {
+  transform: scale(1.02);
+}
+
+.snipswap-logo {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 0 10px rgba(240, 185, 11, 0.3));
+  transition: filter 0.3s ease;
+}
+
+.snipswap-logo:hover {
+  filter: drop-shadow(0 0 15px rgba(240, 185, 11, 0.5));
+}
+
+.brand-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.brand-name {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #f0b90b, #fbbf24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brand-tagline {
+  color: #888;
+  font-size: 11px;
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  flex: 2;
+  justify-content: center;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.nav-item {
+  background: transparent;
+  border: none;
+  color: #ccc;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.nav-item:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item.active {
+  background: linear-gradient(135deg, #f0b90b, #d97706);
+  color: #000;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(240, 185, 11, 0.3);
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #f0b90b;
+  border-radius: 50%;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.network-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.network-selector:hover {
+  border-color: #555;
+  background: rgba(15, 15, 15, 0.9);
+}
+
+.network-icon {
+  font-size: 16px;
+}
+
+.network-name {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.network-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse 2s infinite;
+}
+
+.network-status.connected {
+  background: #10b981;
+}
+
+.network-status.disconnected {
+  background: #ef4444;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.wallet-connect-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f0b90b, #d97706);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.wallet-connect-btn:hover {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(240, 185, 11, 0.3);
+}
+
+.wallet-connect-btn.connected {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+}
+
+.wallet-connect-btn.connected:hover {
+  background: linear-gradient(135deg, #34d399, #10b981);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.wallet-icon {
+  font-size: 16px;
+}
+
+.connection-indicator {
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.settings-menu {
+  position: relative;
+}
+
+.settings-btn {
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #ccc;
+  padding: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.settings-btn:hover {
+  color: #fff;
+  border-color: #555;
+  background: rgba(15, 15, 15, 0.9);
+}
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+  .header-center {
+    flex: 1;
+  }
+  
+  .main-nav {
+    gap: 4px;
+  }
+  
+  .nav-item {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .branded-header {
+    padding: 8px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .header-left,
+  .header-center,
+  .header-right {
+    flex: none;
+  }
+  
+  .header-center {
+    order: 3;
+    width: 100%;
+    margin-top: 8px;
+  }
+  
+  .brand-name {
+    font-size: 20px;
+  }
+  
+  .brand-tagline {
+    font-size: 10px;
+  }
+  
+  .snipswap-logo {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .main-nav {
+    width: 100%;
+    justify-content: space-around;
+  }
+  
+  .nav-item {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+  
+  .header-actions {
+    gap: 8px;
+  }
+  
+  .network-name {
+    display: none;
+  }
+  
+  .wallet-connect-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .wallet-connect-btn span {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-info {
+    display: none;
+  }
+  
+  .header-actions {
+    gap: 4px;
+  }
+  
+  .network-selector {
+    padding: 4px 8px;
+  }
+  
+  .wallet-connect-btn {
+    padding: 4px 8px;
+  }
+  
+  .settings-btn {
+    padding: 4px;
+    font-size: 14px;
+  }
+}
+
+/* Loading Animation for Logo */
+.snipswap-logo.loading {
+  animation: logoSpin 2s linear infinite;
+}
+
+@keyframes logoSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Hover Effects */
+.logo-container:hover .snipswap-logo {
+  animation: logoFloat 0.6s ease-in-out;
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+/* Success Animation */
+.wallet-connect-btn.success {
+  animation: connectSuccess 0.8s ease;
+}
+
+@keyframes connectSuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+

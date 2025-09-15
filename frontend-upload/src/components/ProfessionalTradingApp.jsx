@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, ComposedChart } from 'recharts';
-import CandlestickChart from './CandlestickChart.jsx';
-import AdvancedTradingChart from './AdvancedTradingChart.jsx';
-import PrivacyEnhancedTradingForm from './PrivacyEnhancedTradingForm.jsx';
-import realTimeOracle from '../services/realTimeOracle.js';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import AdvancedTradingChart from './AdvancedTradingChart';
+import PrivacyEnhancedTradingForm from './PrivacyEnhancedTradingForm';
+import BrandedHeader from './BrandedHeader';
+import LoadingScreen from './LoadingScreen';
+import NotificationSystem, { notifications } from './NotificationSystem';
+import RealTimeOracle from '../services/realTimeOracle';
+import '../styles/ProfessionalTrading.css';
 
 const ProfessionalTradingApp = () => {
   const [selectedPair, setSelectedPair] = useState('ATOM/USDC');
@@ -16,6 +19,8 @@ const ProfessionalTradingApp = () => {
   const [chartData, setChartData] = useState([]);
   const [candlestickData, setCandlestickData] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [walletConnected, setWalletConnected] = useState(false);
   const [oracleStatus, setOracleStatus] = useState({ isConnected: false, lastUpdate: null });
   const [realTimePrices, setRealTimePrices] = useState({});
   const wsRef = useRef(null);
@@ -263,9 +268,53 @@ const ProfessionalTradingApp = () => {
       localStorage.setItem('privacyStreak', (currentStreak + 1).toString());
     }
     
-    // Show success notification (you could add a toast notification here)
+    // Show success notification
+    notifications.tradeSuccess(
+      tradeData.pair, 
+      tradeData.amount, 
+      tradeData.side, 
+      tradeData.privacyMode
+    );
     console.log('✅ Trade executed successfully with privacy mode:', tradeData.privacyMode);
   };
+
+  // Handle wallet connection
+  const handleWalletConnect = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Simulate wallet connection process
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      setWalletConnected(true);
+      notifications.walletConnected('secret1abc...def123');
+      
+    } catch (error) {
+      notifications.tradeError('Failed to connect wallet');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Initialize app loading
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        // Simulate app initialization
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        
+        // Initialize oracle connection
+        notifications.oracleConnected(3);
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to initialize app:', error);
+        setIsLoading(false);
+      }
+    };
+
+    initializeApp();
+  }, []);
 
   const updatePrices = () => {
     const newPrices = {};
@@ -426,45 +475,17 @@ const ProfessionalTradingApp = () => {
   const currentPriceData = priceData[selectedPair] || {};
 
   return (
-    <div className="professional-trading-app">
-      {/* Header */}
-      <header className="trading-header">
-        <div className="header-left">
-          <div className="logo">
-            <div className="logo-icon">S</div>
-            <div className="logo-text">
-              <div className="brand-name">SnipSwap</div>
-              <div className="brand-tagline">Sovereign Trading Platform</div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="header-center">
-          <div className="connection-status">
-            <div className={`status-indicator ${isConnected ? 'connected' : 'disconnected'}`}></div>
-            <span>{isConnected ? 'Live Data' : 'Connecting...'}</span>
-          </div>
-        </div>
-
-        <div className="header-right">
-          <div className="privacy-selector">
-            {privacyModes.map(mode => (
-              <button
-                key={mode.id}
-                className={`privacy-mode ${privacyMode === mode.id ? 'active' : ''}`}
-                onClick={() => setPrivacyMode(mode.id)}
-                title={mode.desc}
-              >
-                <span className="mode-icon">{mode.icon}</span>
-                <span className="mode-name">{mode.name}</span>
-              </button>
-            ))}
-          </div>
-          <button className="connect-wallet-btn">Connect Wallet</button>
-        </div>
-      </header>
-
-      {/* Main Trading Interface */}
+    <>
+      <LoadingScreen isLoading={isLoading} />
+      <NotificationSystem />
+      
+      <div className="professional-trading-app">
+        {/* Branded Header */}
+        <BrandedHeader 
+          isConnected={walletConnected}
+          onConnectWallet={handleWalletConnect}
+        />
+        {/* Main Trading Interface */}
       <div className="trading-main">
         {/* Left Sidebar - Pairs */}
         <div className="pairs-sidebar">
@@ -745,6 +766,7 @@ const ProfessionalTradingApp = () => {
         </div>
       </footer>
     </div>
+    </>
   );
 };
 
