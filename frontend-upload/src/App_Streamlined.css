@@ -1,0 +1,536 @@
+/* Streamlined Trading App Styles */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0b0e11;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.streamlined-trading-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0b0e11 0%, #1a1a1a 100%);
+}
+
+/* Loading Screen */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0b0e11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  animation: logoFloat 2s ease-in-out infinite;
+}
+
+.loading-content h2 {
+  color: #f0b90b;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #333;
+  border-top: 3px solid #f0b90b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Header */
+.app-header {
+  background: rgba(26, 26, 26, 0.95);
+  border-bottom: 1px solid #333;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.app-logo {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 0 10px rgba(240, 185, 11, 0.3));
+}
+
+.brand-info h1 {
+  color: #f0b90b;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.brand-info p {
+  color: #888;
+  font-size: 11px;
+  margin: 0;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  flex: 2;
+  justify-content: center;
+}
+
+.main-nav {
+  display: flex;
+  gap: 8px;
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: #ccc;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-btn.active {
+  background: #f0b90b;
+  color: #000;
+  font-weight: 600;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.network-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.network-icon {
+  font-size: 16px;
+}
+
+.connect-wallet-btn {
+  background: linear-gradient(135deg, #f0b90b, #d97706);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.connect-wallet-btn:hover {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  transform: translateY(-1px);
+}
+
+/* Main Content */
+.main-content {
+  display: flex;
+  flex: 1;
+  gap: 1px;
+  background: #333;
+}
+
+/* Pairs Sidebar */
+.pairs-sidebar {
+  width: 280px;
+  background: #0b0e11;
+  border-right: 1px solid #333;
+  padding: 20px;
+}
+
+.pairs-sidebar h3 {
+  color: #fff;
+  font-size: 18px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.pairs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pair-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: rgba(26, 26, 26, 0.5);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pair-item:hover {
+  background: rgba(26, 26, 26, 0.8);
+  border-color: #333;
+}
+
+.pair-item.selected {
+  background: rgba(240, 185, 11, 0.1);
+  border-color: #f0b90b;
+}
+
+.pair-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pair-icon {
+  font-size: 20px;
+}
+
+.pair-symbol {
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.pair-name {
+  color: #888;
+  font-size: 12px;
+}
+
+.pair-data {
+  text-align: right;
+}
+
+.price {
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.change {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.change.positive {
+  color: #0ecb81;
+}
+
+.change.negative {
+  color: #f6465d;
+}
+
+/* Chart Section */
+.chart-section {
+  flex: 1;
+  background: #0b0e11;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #333;
+}
+
+.pair-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.current-pair {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.current-price {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.current-change {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.chart-btn {
+  background: transparent;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chart-btn:hover {
+  border-color: #555;
+  color: #fff;
+}
+
+.chart-btn.active {
+  background: #f0b90b;
+  border-color: #f0b90b;
+  color: #000;
+  font-weight: 500;
+}
+
+.chart-container {
+  flex: 1;
+  padding: 20px;
+  min-height: 400px;
+}
+
+/* Market Sidebar */
+.market-sidebar {
+  width: 320px;
+  background: #0b0e11;
+  border-left: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.order-book,
+.recent-trades {
+  background: #0b0e11;
+  padding: 16px;
+  flex: 1;
+}
+
+.order-book {
+  border-bottom: 1px solid #333;
+}
+
+.order-book h4,
+.recent-trades h4 {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.book-headers,
+.trades-headers {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #333;
+  margin-bottom: 8px;
+}
+
+.book-headers span,
+.trades-headers span {
+  color: #888;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.book-row,
+.trade-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.book-row.ask .price {
+  color: #f6465d;
+}
+
+.book-row.bid .price {
+  color: #0ecb81;
+}
+
+.trade-row.buy .price {
+  color: #0ecb81;
+}
+
+.trade-row.sell .price {
+  color: #f6465d;
+}
+
+.spread {
+  text-align: center;
+  padding: 8px 0;
+  color: #888;
+  font-size: 11px;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  margin: 8px 0;
+}
+
+.trades-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Footer */
+.app-footer {
+  background: rgba(26, 26, 26, 0.95);
+  border-top: 1px solid #333;
+  padding: 12px 24px;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-left {
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
+  color: #888;
+}
+
+.footer-right {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .pairs-sidebar {
+    width: 240px;
+  }
+  
+  .market-sidebar {
+    width: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+  
+  .pairs-sidebar,
+  .market-sidebar {
+    width: 100%;
+  }
+  
+  .chart-section {
+    order: -1;
+  }
+  
+  .app-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .header-center {
+    order: 3;
+    width: 100%;
+    margin-top: 8px;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
