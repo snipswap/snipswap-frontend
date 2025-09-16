@@ -7,7 +7,7 @@ At its core, SnipSwap enables private token swaps with seamless cross-chain func
 🔒 Private Trading
 Swap tokens securely with built-in privacy. Whether you're a casual trader or an advanced strategist, SnipSwap ensures your activity stays discreet.
 
-🧠 AI Agents
+🧠 AI Agents (coming soon)
 Deploy intelligent agents to automate trades, manage strategies, and interact with the ecosystem on your behalf. Designed for those who want to do more with less effort.
 
 📡 Encrypted Communications
