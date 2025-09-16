@@ -1,0 +1,31 @@
+{
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "python app.py",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 100,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  },
+  "environments": {
+    "production": {
+      "variables": {
+        "FLASK_ENV": "production",
+        "SECRET_NETWORK_RPC": "https://grpc-web.secret.express",
+        "SECRET_NETWORK_LCD": "https://lcd.secret.express",
+        "COSMOS_RPC": "https://rpc.cosmos.network",
+        "OSMOSIS_RPC": "https://rpc.osmosis.zone",
+        "WALLETCONNECT_PROJECT_ID": "snipswap-dex-wallet-connect-v2"
+      }
+    },
+    "development": {
+      "variables": {
+        "FLASK_ENV": "development",
+        "FLASK_DEBUG": "1"
+      }
+    }
+  }
+}
+

@@ -1,0 +1,601 @@
+/* Mobile-First Binance-Style SnipSwap DEX */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #1e2329;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+.mobile-binance-app {
+  min-height: 100vh;
+  background: #1e2329;
+  padding-bottom: 20px;
+}
+
+/* Header */
+.mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #1e2329;
+  border-bottom: 1px solid #2b3139;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+}
+
+.brand-name {
+  color: #f0b90b;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.privacy-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 8px 12px;
+  backdrop-filter: blur(10px);
+}
+
+.privacy-icon {
+  font-size: 16px;
+}
+
+.privacy-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.privacy-label {
+  font-size: 11px;
+  color: #848e9c;
+  line-height: 1;
+}
+
+.privacy-status {
+  font-size: 12px;
+  color: #ffffff;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.signup-btn {
+  background: #f0b90b;
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.menu-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 18px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #848e9c;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.separator {
+  color: #5e6673;
+}
+
+/* Price Header */
+.price-header {
+  padding: 16px;
+}
+
+.price-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.coin-icon {
+  font-size: 32px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(240, 185, 11, 0.1);
+  border-radius: 50%;
+}
+
+.price-info h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.hot-badge {
+  background: #f0b90b;
+  color: #000;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.share-btn {
+  background: #2b3139;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  padding: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+/* Current Price Section */
+.current-price-section {
+  padding: 0 16px 20px;
+}
+
+.price-label {
+  font-size: 14px;
+  color: #00d4aa;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.price-display {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.price-amount {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.price-change {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.price-change.positive {
+  color: #00d4aa;
+}
+
+.price-change.negative {
+  color: #f6465d;
+}
+
+.timeframe-indicator {
+  font-size: 12px;
+  color: #848e9c;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Timeframe Selector */
+.timeframe-selector {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.timeframe-selector::-webkit-scrollbar {
+  display: none;
+}
+
+.timeframe-btn {
+  background: transparent;
+  border: none;
+  color: #848e9c;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.timeframe-btn.active {
+  color: #00d4aa;
+  background: rgba(0, 212, 170, 0.1);
+  font-weight: 600;
+}
+
+/* Chart Container */
+.chart-container {
+  position: relative;
+  height: 300px;
+  margin: 0 16px 20px;
+  background: #1e2329;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.chart-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #848e9c;
+  font-size: 14px;
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #2b3139;
+  border-top: 2px solid #f0b90b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.price-chart {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.price-scale {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.currency-label {
+  font-size: 12px;
+  color: #848e9c;
+  font-weight: 500;
+}
+
+/* Trading Section */
+.trading-section {
+  padding: 0 16px 20px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.trading-timeframes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.trading-timeframe-btn {
+  background: #2b3139;
+  border: 1px solid #373d47;
+  color: #848e9c;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trading-timeframe-btn:hover,
+.trading-timeframe-btn:active {
+  background: rgba(240, 185, 11, 0.1);
+  border-color: #f0b90b;
+  color: #f0b90b;
+}
+
+/* Trading Pairs Section */
+.trading-pairs-section {
+  padding: 0 16px 20px;
+}
+
+.pairs-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pair-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #2b3139;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pair-card:hover {
+  background: #373d47;
+  border-color: #474d57;
+}
+
+.pair-card.selected {
+  background: rgba(240, 185, 11, 0.1);
+  border-color: #f0b90b;
+}
+
+.pair-card .pair-icon {
+  font-size: 24px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pair-info {
+  flex: 1;
+}
+
+.pair-symbol {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.pair-name {
+  font-size: 12px;
+  color: #848e9c;
+}
+
+.pair-price {
+  text-align: right;
+}
+
+.pair-price .price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 2px;
+  font-family: 'SF Mono', Monaco, monospace;
+}
+
+.pair-price .change {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.pair-price .change.positive {
+  color: #00d4aa;
+}
+
+.pair-price .change.negative {
+  color: #f6465d;
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: flex;
+  gap: 12px;
+  padding: 0 16px 20px;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buy-btn {
+  background: linear-gradient(135deg, #00d4aa, #00b894);
+  color: #ffffff;
+}
+
+.trade-btn {
+  background: linear-gradient(135deg, #f0b90b, #d97706);
+  color: #000000;
+}
+
+.action-btn:active {
+  transform: translateY(1px);
+}
+
+.action-icon {
+  font-size: 16px;
+}
+
+/* App Promotion */
+.app-promotion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  margin: 0 16px;
+  background: #2b3139;
+  border-radius: 12px;
+  border: 1px solid #373d47;
+}
+
+.app-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.app-details h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.app-details p {
+  font-size: 12px;
+  color: #848e9c;
+}
+
+.download-btn {
+  background: #f0b90b;
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .mobile-binance-app {
+    max-width: 480px;
+    margin: 0 auto;
+    border-left: 1px solid #2b3139;
+    border-right: 1px solid #2b3139;
+  }
+  
+  .chart-container {
+    height: 400px;
+  }
+  
+  .pairs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-binance-app {
+    max-width: 600px;
+  }
+  
+  .chart-container {
+    height: 500px;
+  }
+  
+  .trading-timeframes {
+    justify-content: center;
+  }
+  
+  .quick-actions {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 0 16px 20px;
+  }
+}
+
+/* Touch Interactions */
+@media (hover: none) and (pointer: coarse) {
+  .timeframe-btn:active,
+  .trading-timeframe-btn:active,
+  .pair-card:active,
+  .action-btn:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+  .mobile-binance-app {
+    background: #0b0e11;
+  }
+  
+  .mobile-header {
+    background: #0b0e11;
+    border-bottom-color: #1e2329;
+  }
+  
+  .pair-card {
+    background: #1e2329;
+  }
+  
+  .pair-card:hover {
+    background: #2b3139;
+  }
+  
+  .app-promotion {
+    background: #1e2329;
+    border-color: #2b3139;
+  }
+}
+

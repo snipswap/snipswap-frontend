@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import WorkingSnipSwapDEX from './WorkingSnipSwapDEX.jsx'
+import MobileBinanceApp from './MobileBinanceApp.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <WorkingSnipSwapDEX />
+    <MobileBinanceApp />
   </React.StrictMode>,
 )
 
