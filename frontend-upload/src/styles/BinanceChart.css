@@ -1,0 +1,259 @@
+/* Binance-Style Chart Styles */
+
+.binance-style-chart {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: #0b0e11;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.price-chart {
+  flex: 1;
+  min-height: 300px;
+  background: linear-gradient(135deg, #0b0e11 0%, #1e2329 100%);
+  position: relative;
+}
+
+.volume-chart {
+  height: 80px;
+  background: #0b0e11;
+  border-top: 1px solid #2b3139;
+  position: relative;
+}
+
+/* Enhanced Tooltip Styling */
+.binance-tooltip {
+  background: rgba(30, 35, 41, 0.95);
+  border: 1px solid #2b3139;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  min-width: 180px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.tooltip-header {
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #2b3139;
+}
+
+.tooltip-time {
+  font-size: 12px;
+  color: #848e9c;
+  font-weight: 500;
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.tooltip-label {
+  color: #848e9c;
+  font-weight: 400;
+  min-width: 50px;
+}
+
+.tooltip-value {
+  color: #f0f0f0;
+  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.tooltip-value.bullish {
+  color: #0ecb81;
+}
+
+.tooltip-value.bearish {
+  color: #f6465d;
+}
+
+.tooltip-value.high {
+  color: #0ecb81;
+}
+
+.tooltip-value.low {
+  color: #f6465d;
+}
+
+/* Grid Enhancements */
+.recharts-cartesian-grid-horizontal line {
+  stroke: #2b3139;
+  stroke-width: 0.5;
+  opacity: 0.8;
+}
+
+.recharts-cartesian-grid-vertical line {
+  stroke: #2b3139;
+  stroke-width: 0.5;
+  opacity: 0.3;
+}
+
+/* Axis Styling */
+.recharts-xAxis .recharts-cartesian-axis-tick-value {
+  fill: #848e9c;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.recharts-yAxis .recharts-cartesian-axis-tick-value {
+  fill: #848e9c;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Chart Container Enhancements */
+.recharts-wrapper {
+  background: transparent;
+}
+
+.recharts-surface {
+  background: transparent;
+}
+
+/* Candlestick Enhancements */
+.recharts-bar-rectangle {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Volume Chart Specific Styles */
+.volume-chart .recharts-bar-rectangle {
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.volume-chart .recharts-bar-rectangle:hover {
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .binance-tooltip {
+    min-width: 150px;
+    padding: 8px;
+  }
+  
+  .tooltip-row {
+    font-size: 11px;
+  }
+  
+  .volume-chart {
+    height: 60px;
+  }
+  
+  .price-chart {
+    min-height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .binance-tooltip {
+    min-width: 120px;
+    padding: 6px;
+  }
+  
+  .tooltip-row {
+    font-size: 10px;
+  }
+  
+  .volume-chart {
+    height: 50px;
+  }
+  
+  .price-chart {
+    min-height: 200px;
+  }
+}
+
+/* Loading Animation */
+.chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #848e9c;
+  font-size: 14px;
+  background: #0b0e11;
+}
+
+.chart-loading::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid #2b3139;
+  border-top: 2px solid #0ecb81;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Hover Effects */
+.binance-style-chart:hover .recharts-cartesian-grid-horizontal line {
+  opacity: 1;
+}
+
+/* Price Scale Enhancements */
+.recharts-yAxis {
+  background: rgba(11, 14, 17, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+/* Chart Border */
+.binance-style-chart {
+  border: 1px solid #2b3139;
+}
+
+/* Crosshair Styling */
+.recharts-tooltip-cursor {
+  stroke: #848e9c;
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+  opacity: 0.6;
+}
+
+/* Enhanced Visual Hierarchy */
+.price-chart {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.volume-chart {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+/* Professional Typography */
+.binance-tooltip,
+.recharts-cartesian-axis-tick-value {
+  font-feature-settings: 'tnum' 1, 'kern' 1;
+  letter-spacing: -0.01em;
+}
+
+/* Smooth Transitions */
+.binance-style-chart * {
+  transition: opacity 0.2s ease, stroke 0.2s ease, fill 0.2s ease;
+}
+
+/* Focus States for Accessibility */
+.binance-style-chart:focus-within {
+  outline: 2px solid #0ecb81;
+  outline-offset: 2px;
+}
+
