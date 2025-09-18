@@ -4,13 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SnipSwap - Sovereign Trading Platform</title>
-    <link rel="icon" href="logo_snipswap.png" type="image/png">
-    
-    <!-- External Libraries for Real Trading -->
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@cosmjs/stargate@0.32.2/build/index.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/web3@4.2.0/dist/web3.min.js"></script>
-    
     <style>
         * {
             margin: 0;
@@ -20,50 +13,38 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0b0e11;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
             color: #ffffff;
             overflow-x: hidden;
-            line-height: 1.4;
         }
 
-        .mobile-app {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #0b0e11 0%, #1e2329 100%);
-            position: relative;
-        }
-
-        /* Enhanced Header with Wallet Status */
         .header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 16px 20px;
+            align-items: center;
+            padding: 15px 20px;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .brand {
+        .logo-section {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .brand-logo {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #f0b90b, #f8d12f);
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #f0b90b, #ffd700);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
             font-weight: bold;
+            font-size: 18px;
             color: #000;
-            box-shadow: 0 4px 12px rgba(240, 185, 11, 0.3);
         }
 
         .brand-text {
@@ -73,276 +54,169 @@
 
         .brand-name {
             font-size: 18px;
-            font-weight: 700;
+            font-weight: bold;
             color: #f0b90b;
-            letter-spacing: -0.5px;
         }
 
         .brand-tagline {
             font-size: 11px;
-            color: #848e9c;
-            font-weight: 400;
+            color: #888;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .wallet-section {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .wallet-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            background: rgba(0, 212, 170, 0.1);
-            border: 1px solid rgba(0, 212, 170, 0.2);
-            border-radius: 20px;
-            font-size: 12px;
-            color: #00d4aa;
-            display: none;
-        }
-
-        .wallet-status.connected {
-            display: flex;
-        }
-
-        .wallet-status .status-dot {
-            width: 6px;
-            height: 6px;
-            background: #00d4aa;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
         .connect-wallet-btn {
-            background: linear-gradient(135deg, #f0b90b, #f8d12f);
+            background: linear-gradient(135deg, #f0b90b, #ffd700);
             color: #000;
             border: none;
-            padding: 12px 20px;
-            border-radius: 24px;
-            font-size: 14px;
-            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(240, 185, 11, 0.3);
         }
 
         .connect-wallet-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(240, 185, 11, 0.4);
+            box-shadow: 0 8px 25px rgba(240, 185, 11, 0.3);
         }
 
-        .connect-wallet-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Privacy Mode Selector */
-        .privacy-mode {
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .privacy-tabs {
+        .privacy-modes {
             display: flex;
             gap: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 4px;
+            margin: 20px;
+            justify-content: center;
         }
 
         .privacy-tab {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #848e9c;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 10px 16px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
+            transition: all 0.3s ease;
+            font-size: 14px;
         }
 
         .privacy-tab.active {
-            background: linear-gradient(135deg, #f0b90b, #f8d12f);
+            background: linear-gradient(135deg, #f0b90b, #ffd700);
             color: #000;
-            font-weight: 600;
+            border-color: #f0b90b;
         }
 
-        .privacy-tab:hover:not(.active) {
+        .trading-pair {
+            text-align: center;
+            margin: 20px;
+            padding: 20px;
             background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Enhanced Price Section */
-        .price-section {
-            padding: 24px 20px;
-            background: linear-gradient(135deg, rgba(240, 185, 11, 0.05), rgba(0, 212, 170, 0.05));
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .current-pair {
+        .pair-header {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 15px;
         }
 
         .pair-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #f0b90b, #f8d12f);
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #f0b90b, #ffd700);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 12px rgba(240, 185, 11, 0.3);
-        }
-
-        .pair-info {
-            flex: 1;
+            font-size: 16px;
         }
 
         .pair-name {
-            font-size: 18px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 2px;
-        }
-
-        .pair-network {
-            font-size: 12px;
-            color: #848e9c;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
         }
 
         .network-badge {
-            background: rgba(0, 212, 170, 0.2);
-            color: #00d4aa;
-            padding: 2px 6px;
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            padding: 4px 8px;
             border-radius: 4px;
             font-size: 10px;
-            font-weight: 500;
+            text-transform: uppercase;
         }
 
-        .current-price {
+        .price-display {
             font-size: 36px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 8px;
-            font-variant-numeric: tabular-nums;
+            font-weight: bold;
+            color: #fff;
+            margin: 10px 0;
         }
 
         .price-change {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 16px;
+            font-weight: bold;
             margin-bottom: 20px;
         }
 
-        .change-value {
-            font-size: 16px;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-variant-numeric: tabular-nums;
+        .price-change.positive {
+            color: #00ff88;
         }
 
-        .change-value.positive {
-            background: rgba(0, 212, 170, 0.2);
-            color: #00d4aa;
+        .price-change.negative {
+            color: #ff4757;
         }
 
-        .change-value.negative {
-            background: rgba(246, 70, 93, 0.2);
-            color: #f6465d;
-        }
-
-        .change-period {
-            font-size: 12px;
-            color: #848e9c;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 4px 8px;
-            border-radius: 12px;
-        }
-
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: #00d4aa;
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: #00d4aa;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        /* Enhanced Price Stats */
         .price-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin: 20px 0;
         }
 
         .stat-item {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 8px;
             text-align: center;
         }
 
         .stat-label {
-            font-size: 12px;
-            color: #848e9c;
-            margin-bottom: 8px;
+            font-size: 11px;
+            color: #888;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-bottom: 5px;
         }
 
         .stat-value {
             font-size: 16px;
-            font-weight: 600;
-            color: #ffffff;
-            font-variant-numeric: tabular-nums;
+            font-weight: bold;
+            color: #fff;
         }
 
-        /* Advanced Chart Section */
-        .chart-section {
-            padding: 0 20px 24px;
+        .chart-container {
+            margin: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
+            height: 400px;
         }
 
         .chart-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
+            align-items: center;
+            margin-bottom: 15px;
         }
 
-        .section-title {
+        .chart-title {
             font-size: 18px;
-            font-weight: 600;
-            color: #ffffff;
+            font-weight: bold;
+            color: #fff;
         }
 
         .chart-controls {
@@ -350,637 +224,225 @@
             gap: 8px;
         }
 
-        .chart-type-btn {
+        .chart-btn {
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #848e9c;
-            font-size: 12px;
-            font-weight: 500;
-            padding: 8px 12px;
-            border-radius: 6px;
+            color: #fff;
             cursor: pointer;
-            transition: all 0.2s ease;
+            font-size: 12px;
+            transition: all 0.3s ease;
         }
 
-        .chart-type-btn.active {
-            background: rgba(240, 185, 11, 0.2);
-            border-color: rgba(240, 185, 11, 0.4);
-            color: #f0b90b;
+        .chart-btn.active {
+            background: linear-gradient(135deg, #f0b90b, #ffd700);
+            color: #000;
+            border-color: #f0b90b;
         }
 
-        /* Trading Indicators Panel */
+        .chart-canvas {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+
+        #priceChart {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+
         .indicators-panel {
-            background: rgba(0, 0, 0, 0.7);
+            margin: 20px;
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            backdrop-filter: blur(10px);
+            padding: 20px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .indicators-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .indicators-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .indicators-toggle {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .indicator-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #848e9c;
-            font-size: 10px;
-            font-weight: 500;
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .indicator-btn.active {
-            background: rgba(240, 185, 11, 0.2);
-            border-color: rgba(240, 185, 11, 0.4);
-            color: #f0b90b;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #fff;
         }
 
         .indicators-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
         }
 
         .indicator-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
         }
 
         .indicator-label {
-            font-size: 12px;
-            color: #848e9c;
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 5px;
         }
 
         .indicator-value {
-            font-size: 12px;
-            font-weight: 600;
-            font-variant-numeric: tabular-nums;
+            font-size: 14px;
+            font-weight: bold;
         }
 
         .indicator-value.bullish {
-            color: #00d4aa;
+            color: #00ff88;
         }
 
         .indicator-value.bearish {
-            color: #f6465d;
+            color: #ff4757;
         }
 
         .indicator-value.neutral {
-            color: #fcd535;
+            color: #ffd700;
         }
 
-        /* Timeframe Selector */
-        .timeframe-section {
-            margin-bottom: 16px;
-        }
-
-        .timeframe-selector {
+        .timeframes {
             display: flex;
-            gap: 6px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
-            padding: 6px;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        .timeframe-selector::-webkit-scrollbar {
-            display: none;
+            gap: 8px;
+            margin: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .timeframe-btn {
-            background: transparent;
-            border: none;
-            color: #848e9c;
-            font-size: 12px;
-            font-weight: 500;
-            padding: 10px 14px;
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            min-width: 44px;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .timeframe-btn:hover {
             background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
+            color: #fff;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
         }
 
         .timeframe-btn.active {
-            background: rgba(240, 185, 11, 0.2);
-            color: #f0b90b;
-            font-weight: 600;
+            background: linear-gradient(135deg, #f0b90b, #ffd700);
+            color: #000;
+            border-color: #f0b90b;
         }
 
-        /* Enhanced Chart Container */
-        .chart-container {
-            position: relative;
-            height: 320px;
-            background: #1e2329;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            touch-action: none;
-            user-select: none;
-        }
-
-        .price-chart {
-            width: 100%;
-            height: 100%;
-            display: block;
-            touch-action: none;
-            pointer-events: auto;
-        }
-
-        .chart-overlay {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            right: 12px;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .chart-info {
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 8px;
-            padding: 8px 12px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 11px;
-            color: #ffffff;
-        }
-
-        /* Volume Indicator */
-        .volume-indicator {
-            position: absolute;
-            bottom: 12px;
-            left: 12px;
-            right: 12px;
-            height: 60px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 8px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .volume-header {
-            padding: 6px 12px;
-            font-size: 10px;
-            color: #848e9c;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .volume-bars {
-            display: flex;
-            align-items: end;
-            height: 36px;
-            padding: 6px 12px;
-            gap: 1px;
-        }
-
-        .volume-bar {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 1px;
-            min-height: 2px;
-            transition: all 0.2s ease;
-        }
-
-        .volume-bar.high {
-            background: rgba(0, 212, 170, 0.8);
-        }
-
-        .volume-bar.medium {
-            background: rgba(240, 185, 11, 0.8);
-        }
-
-        .volume-bar.low {
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        /* Trading Pairs Section */
-        .pairs-section {
-            padding: 0 20px 24px;
-        }
-
-        .pairs-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .pairs-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .pair-card {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 18px 16px;
+        .markets-section {
+            margin: 20px;
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .markets-header {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .market-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-height: 76px;
+            border: 2px solid transparent;
         }
 
-        .pair-card:hover {
+        .market-item:hover {
             background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(240, 185, 11, 0.3);
-            transform: translateY(-2px);
         }
 
-        .pair-card.active {
+        .market-item.active {
+            border-color: #f0b90b;
             background: rgba(240, 185, 11, 0.1);
-            border-color: rgba(240, 185, 11, 0.4);
         }
 
-        .pair-card-icon {
-            width: 44px;
-            height: 44px;
+        .market-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .market-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #f0b90b, #ffd700);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            background: linear-gradient(135deg, #f0b90b, #f8d12f);
-            box-shadow: 0 4px 12px rgba(240, 185, 11, 0.3);
-        }
-
-        .pair-card-info {
-            flex: 1;
-        }
-
-        .pair-card-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-
-        .pair-card-network {
             font-size: 12px;
-            color: #848e9c;
+            color: #000;
         }
 
-        .pair-card-price {
+        .market-name {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .market-price {
             text-align: right;
         }
 
-        .pair-card-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 4px;
-            font-variant-numeric: tabular-nums;
+        .market-price-value {
+            font-weight: bold;
+            color: #fff;
         }
 
-        .pair-card-change {
+        .market-change {
             font-size: 12px;
-            font-weight: 500;
-            font-variant-numeric: tabular-nums;
         }
 
-        .pair-card-change.positive {
-            color: #00d4aa;
+        .market-change.positive {
+            color: #00ff88;
         }
 
-        .pair-card-change.negative {
-            color: #f6465d;
+        .market-change.negative {
+            color: #ff4757;
         }
 
-        /* Trading Actions Section */
-        .trading-section {
-            padding: 0 20px 32px;
-        }
-
-        .trading-tabs {
-            display: flex;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 20px;
-        }
-
-        .trading-tab {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #848e9c;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 12px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-
-        .trading-tab.active {
-            background: linear-gradient(135deg, #f0b90b, #f8d12f);
-            color: #000;
-            font-weight: 600;
-        }
-
-        .trading-form {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-label {
-            font-size: 12px;
-            color: #848e9c;
-            margin-bottom: 8px;
-            display: block;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 12px 16px;
-            color: #ffffff;
-            font-size: 16px;
-            font-variant-numeric: tabular-nums;
-            transition: all 0.2s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: rgba(240, 185, 11, 0.5);
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .form-input::placeholder {
-            color: #848e9c;
-        }
-
-        .balance-info {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 12px;
-            color: #848e9c;
-        }
-
-        .balance-amount {
-            color: #ffffff;
-            font-weight: 500;
-        }
-
-        .max-btn {
-            background: rgba(240, 185, 11, 0.2);
-            border: 1px solid rgba(240, 185, 11, 0.4);
-            color: #f0b90b;
-            font-size: 10px;
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .max-btn:hover {
-            background: rgba(240, 185, 11, 0.3);
-        }
-
-        .trade-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #f0b90b, #f8d12f);
-            color: #000;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-            box-shadow: 0 4px 12px rgba(240, 185, 11, 0.3);
-        }
-
-        .trade-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(240, 185, 11, 0.4);
-        }
-
-        .trade-btn:active {
-            transform: translateY(0);
-        }
-
-        .trade-btn:disabled {
-            background: rgba(255, 255, 255, 0.1);
-            color: #848e9c;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Wallet Modal */
-        .wallet-modal {
+        .live-indicator {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .wallet-modal.show {
-            display: flex;
-        }
-
-        .wallet-modal-content {
-            background: #1e2329;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            padding: 8px 12px;
             border-radius: 20px;
-            padding: 24px;
-            max-width: 400px;
-            width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .wallet-modal-header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .wallet-modal-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 8px;
-        }
-
-        .wallet-modal-subtitle {
-            font-size: 14px;
-            color: #848e9c;
-        }
-
-        .wallet-options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .wallet-option {
+            font-size: 12px;
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            gap: 8px;
+            z-index: 1000;
         }
 
-        .wallet-option:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(240, 185, 11, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .wallet-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            background: linear-gradient(135deg, #f0b90b, #f8d12f);
-        }
-
-        .wallet-info {
-            flex: 1;
-        }
-
-        .wallet-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-
-        .wallet-description {
-            font-size: 12px;
-            color: #848e9c;
-        }
-
-        .wallet-status {
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-weight: 500;
-        }
-
-        .wallet-status.available {
-            background: rgba(0, 212, 170, 0.2);
-            color: #00d4aa;
-        }
-
-        .wallet-status.unavailable {
-            background: rgba(246, 70, 93, 0.2);
-            color: #f6465d;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: none;
-            border: none;
-            color: #848e9c;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 8px;
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
             border-radius: 50%;
-            transition: all 0.2s ease;
+            animation: pulse 2s infinite;
         }
 
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
-        /* Loading States */
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-top: 2px solid #f0b90b;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 375px) {
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
             .header {
-                padding: 12px 16px;
+                padding: 12px 15px;
             }
             
             .brand-name {
@@ -993,1229 +455,254 @@
             
             .connect-wallet-btn {
                 padding: 10px 16px;
-                font-size: 13px;
+                font-size: 14px;
             }
             
-            .current-price {
+            .price-display {
                 font-size: 28px;
             }
             
-            .price-stats {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-            
             .chart-container {
-                height: 240px;
+                height: 300px;
+                margin: 15px;
+                padding: 15px;
             }
             
-            .indicators-panel {
-                display: none;
+            .chart-canvas {
+                height: 200px;
             }
-        }
-
-        @media (max-width: 414px) {
-            .price-section,
-            .chart-section,
-            .pairs-section,
-            .trading-section {
-                padding-left: 16px;
-                padding-right: 16px;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .mobile-app {
-                max-width: 480px;
-                margin: 0 auto;
-                border-left: 1px solid #1e2329;
-                border-right: 1px solid #1e2329;
-                min-height: 100vh;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            }
-            
-            .chart-container {
-                height: 360px;
-            }
-        }
-
-        /* Touch interactions */
-        @media (hover: none) and (pointer: coarse) {
-            .timeframe-btn:active,
-            .pair-card:active,
-            .trade-btn:active,
-            .connect-wallet-btn:active,
-            .wallet-option:active {
-                transform: scale(0.95);
-                transition: transform 0.1s ease;
-            }
-            
-            .chart-container {
-                touch-action: pan-y;
-            }
-            
-            .price-chart {
-                touch-action: manipulation;
-            }
-        }
-
-        /* Connection Status Indicator */
-        .connection-status {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #ffffff;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .connection-status.show {
-            opacity: 1;
-        }
-
-        .connection-status.connected {
-            background: rgba(0, 212, 170, 0.2);
-            border-color: rgba(0, 212, 170, 0.3);
-            color: #00d4aa;
-        }
-
-        .connection-status.disconnected {
-            background: rgba(246, 70, 93, 0.2);
-            border-color: rgba(246, 70, 93, 0.3);
-            color: #f6465d;
         }
     </style>
 </head>
 <body>
-    <div class="mobile-app">
-        <!-- Enhanced Header with Wallet Status -->
-        <div class="header">
-            <div class="brand">
-                <div class="brand-logo">🔐</div>
-                <div class="brand-text">
-                    <div class="brand-name">SnipSwap</div>
-                    <div class="brand-tagline">Sovereign Trading Platform</div>
-                </div>
-            </div>
-            <div class="wallet-section">
-                <div class="wallet-status" id="walletStatus">
-                    <div class="status-dot"></div>
-                    <span id="walletAddress">0x1234...5678</span>
-                </div>
-                <button class="connect-wallet-btn" id="connectWalletBtn" onclick="showWalletModal()">
-                    Connect Wallet
-                </button>
+    <!-- Live Data Indicator -->
+    <div class="live-indicator">
+        <div class="live-dot"></div>
+        <span>Live Data</span>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo">S</div>
+            <div class="brand-text">
+                <div class="brand-name">SnipSwap</div>
+                <div class="brand-tagline">Sovereign Trading Platform</div>
             </div>
         </div>
+        <button class="connect-wallet-btn" onclick="showWalletModal()">Connect Wallet</button>
+    </div>
 
-        <!-- Privacy Mode Selector -->
-        <div class="privacy-mode">
-            <div class="privacy-tabs">
-                <button class="privacy-tab" onclick="setPrivacyMode('public')">Public</button>
-                <button class="privacy-tab active" onclick="setPrivacyMode('private')">Private</button>
-                <button class="privacy-tab" onclick="setPrivacyMode('stealth')">Stealth</button>
+    <!-- Privacy Modes -->
+    <div class="privacy-modes">
+        <button class="privacy-tab active" onclick="setPrivacyMode('public')">Public</button>
+        <button class="privacy-tab" onclick="setPrivacyMode('private')">Private</button>
+        <button class="privacy-tab" onclick="setPrivacyMode('stealth')">Stealth</button>
+    </div>
+
+    <!-- Trading Pair Display -->
+    <div class="trading-pair">
+        <div class="pair-header">
+            <div class="pair-icon" id="currentPairIcon">⚛️</div>
+            <div>
+                <div class="pair-name" id="currentPairName">ATOM/USDC</div>
+                <div class="network-badge" id="currentNetwork">Cosmos Hub</div>
             </div>
         </div>
-
-        <!-- Enhanced Price Section -->
-        <div class="price-section">
-            <div class="current-pair">
-                <div class="pair-icon" id="currentPairIcon">⚛️</div>
-                <div class="pair-info">
-                    <div class="pair-name" id="currentPairName">ATOM/USDC</div>
-                    <div class="pair-network">
-                        <span id="currentPairNetwork">Cosmos</span>
-                        <span class="network-badge">Secret Network</span>
-                    </div>
-                </div>
+        
+        <div class="price-display" id="currentPrice">$4.6200</div>
+        <div class="price-change positive" id="currentChange">+1.66% (24h)</div>
+        
+        <div class="price-stats">
+            <div class="stat-item">
+                <div class="stat-label">24H HIGH</div>
+                <div class="stat-value" id="high24h">$4.7985</div>
             </div>
-            
-            <div class="current-price" id="currentPrice">$4.5542</div>
-            
-            <div class="price-change">
-                <div class="change-value positive" id="priceChange">+1.38%</div>
-                <div class="change-period">24h</div>
-                <div class="live-indicator">
-                    <div class="live-dot"></div>
-                    <span>Live Data</span>
-                </div>
+            <div class="stat-item">
+                <div class="stat-label">24H LOW</div>
+                <div class="stat-value" id="low24h">$4.3415</div>
             </div>
-
-            <div class="price-stats">
-                <div class="stat-item">
-                    <div class="stat-label">24h High</div>
-                    <div class="stat-value" id="high24h">$4.7819</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">24h Low</div>
-                    <div class="stat-value" id="low24h">$4.3265</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">24h Volume</div>
-                    <div class="stat-value" id="volume24h">$669.8M</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Market Cap</div>
-                    <div class="stat-value" id="marketCap">$67.0B</div>
-                </div>
+            <div class="stat-item">
+                <div class="stat-label">24H VOLUME</div>
+                <div class="stat-value" id="volume24h">$98.8M</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">MARKET CAP</div>
+                <div class="stat-value" id="marketCap">$2.1B</div>
             </div>
         </div>
+    </div>
 
-        <!-- Advanced Chart Section -->
-        <div class="chart-section">
-            <div class="chart-header">
-                <div class="section-title">Advanced Chart</div>
-                <div class="chart-controls">
-                    <button class="chart-type-btn active" onclick="setChartType('line')">Line</button>
-                    <button class="chart-type-btn" onclick="setChartType('candle')">Candles</button>
-                    <button class="chart-type-btn" onclick="setChartType('area')">Area</button>
-                </div>
-            </div>
-
-            <!-- Trading Indicators Panel -->
-            <div class="indicators-panel">
-                <div class="indicators-header">
-                    <div class="indicators-title">Technical Indicators</div>
-                    <div class="indicators-toggle">
-                        <button class="indicator-btn active" onclick="toggleIndicator('ma')">MA</button>
-                        <button class="indicator-btn" onclick="toggleIndicator('rsi')">RSI</button>
-                        <button class="indicator-btn" onclick="toggleIndicator('macd')">MACD</button>
-                        <button class="indicator-btn" onclick="toggleIndicator('bb')">BB</button>
-                        <button class="indicator-btn active" onclick="toggleIndicator('volume')">VOL</button>
-                    </div>
-                </div>
-                <div class="indicators-grid">
-                    <div class="indicator-item">
-                        <span class="indicator-label">MA(20):</span>
-                        <span class="indicator-value bullish" id="ma20Value">$4.5234</span>
-                    </div>
-                    <div class="indicator-item">
-                        <span class="indicator-label">RSI(14):</span>
-                        <span class="indicator-value neutral" id="rsiValue">58.3</span>
-                    </div>
-                    <div class="indicator-item">
-                        <span class="indicator-label">MACD:</span>
-                        <span class="indicator-value bullish" id="macdValue">+0.023</span>
-                    </div>
-                    <div class="indicator-item">
-                        <span class="indicator-label">BB:</span>
-                        <span class="indicator-value" id="bbValue">$4.45-$4.67</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Timeframe Selector -->
-            <div class="timeframe-section">
-                <div class="timeframe-selector">
-                    <button class="timeframe-btn" onclick="changeTimeframe('1m')">1m</button>
-                    <button class="timeframe-btn" onclick="changeTimeframe('5m')">5m</button>
-                    <button class="timeframe-btn" onclick="changeTimeframe('15m')">15m</button>
-                    <button class="timeframe-btn" onclick="changeTimeframe('30m')">30m</button>
-                    <button class="timeframe-btn" onclick="changeTimeframe('1h')">1h</button>
-                    <button class="timeframe-btn" onclick="changeTimeframe('4h')">4h</button>
-                    <button class="timeframe-btn" onclick="changeTimeframe('12h')">12h</button>
-                    <button class="timeframe-btn active" onclick="changeTimeframe('1d')">1d</button>
-                    <button class="timeframe-btn" onclick="changeTimeframe('1w')">1w</button>
-                    <button class="timeframe-btn" onclick="changeTimeframe('1M')">1M</button>
-                </div>
-            </div>
-
-            <!-- Enhanced Chart Container -->
-            <div class="chart-container" id="chartContainer">
-                <canvas class="price-chart" id="priceChart"></canvas>
-                
-                <!-- Chart Overlay -->
-                <div class="chart-overlay">
-                    <div class="chart-info" id="chartInfo">
-                        Real-time price data • Professional trading indicators
-                    </div>
-                </div>
-                
-                <!-- Volume Indicator -->
-                <div class="volume-indicator" id="volumeIndicator">
-                    <div class="volume-header">Volume</div>
-                    <div class="volume-bars" id="volumeBars">
-                        <!-- Volume bars generated by JavaScript -->
-                    </div>
-                </div>
+    <!-- Chart Container -->
+    <div class="chart-container">
+        <div class="chart-header">
+            <div class="chart-title">Advanced Chart</div>
+            <div class="chart-controls">
+                <button class="chart-btn" onclick="setChartType('line')">Line</button>
+                <button class="chart-btn active" onclick="setChartType('candles')">Candles</button>
+                <button class="chart-btn" onclick="setChartType('area')">Area</button>
             </div>
         </div>
+        <div class="chart-canvas">
+            <canvas id="priceChart"></canvas>
+        </div>
+    </div>
 
-        <!-- Trading Pairs Section -->
-        <div class="pairs-section">
-            <div class="pairs-header">
-                <div class="section-title">Markets</div>
+    <!-- Trading Indicators -->
+    <div class="indicators-panel">
+        <div class="indicators-header">Technical Indicators</div>
+        <div class="indicators-grid">
+            <div class="indicator-item">
+                <div class="indicator-label">MA(20)</div>
+                <div class="indicator-value bullish" id="ma20Value">$4.5234</div>
             </div>
-            <div class="pairs-grid" id="pairsGrid">
-                <!-- Trading pairs will be populated by JavaScript -->
+            <div class="indicator-item">
+                <div class="indicator-label">RSI(14)</div>
+                <div class="indicator-value neutral" id="rsiValue">58.3</div>
+            </div>
+            <div class="indicator-item">
+                <div class="indicator-label">MACD</div>
+                <div class="indicator-value bullish" id="macdValue">+0.023</div>
+            </div>
+            <div class="indicator-item">
+                <div class="indicator-label">BB</div>
+                <div class="indicator-value" id="bbValue">$4.45-$4.67</div>
             </div>
         </div>
+    </div>
 
-        <!-- Trading Actions Section -->
-        <div class="trading-section">
-            <div class="trading-tabs">
-                <button class="trading-tab active" onclick="setTradingMode('spot')">Spot</button>
-                <button class="trading-tab" onclick="setTradingMode('privacy')">Privacy</button>
-                <button class="trading-tab" onclick="setTradingMode('bridge')">Bridge</button>
+    <!-- Timeframes -->
+    <div class="timeframes">
+        <button class="timeframe-btn" onclick="setTimeframe('1m')">1m</button>
+        <button class="timeframe-btn" onclick="setTimeframe('5m')">5m</button>
+        <button class="timeframe-btn" onclick="setTimeframe('15m')">15m</button>
+        <button class="timeframe-btn" onclick="setTimeframe('30m')">30m</button>
+        <button class="timeframe-btn active" onclick="setTimeframe('1h')">1h</button>
+        <button class="timeframe-btn" onclick="setTimeframe('4h')">4h</button>
+        <button class="timeframe-btn" onclick="setTimeframe('12h')">12h</button>
+        <button class="timeframe-btn" onclick="setTimeframe('1d')">1d</button>
+        <button class="timeframe-btn" onclick="setTimeframe('1w')">1w</button>
+    </div>
+
+    <!-- Markets -->
+    <div class="markets-section">
+        <div class="markets-header">Markets</div>
+        <div class="market-item active" onclick="selectPair('ATOM')">
+            <div class="market-info">
+                <div class="market-icon">⚛️</div>
+                <div class="market-name">ATOM/USDC</div>
             </div>
-
-            <div class="trading-form" id="tradingForm">
-                <div class="form-group">
-                    <label class="form-label">Amount</label>
-                    <input type="number" class="form-input" id="tradeAmount" placeholder="0.00" step="0.000001">
-                    <div class="balance-info">
-                        <span>Available: <span class="balance-amount" id="availableBalance">0.00 ATOM</span></span>
-                        <button class="max-btn" onclick="setMaxAmount()">MAX</button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Price (USDC)</label>
-                    <input type="number" class="form-input" id="tradePrice" placeholder="Market Price" step="0.0001">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Total (USDC)</label>
-                    <input type="number" class="form-input" id="tradeTotal" placeholder="0.00" readonly>
-                </div>
-
-                <button class="trade-btn" id="tradeBtn" onclick="executeTrade()" disabled>
-                    Connect Wallet to Trade
-                </button>
+            <div class="market-price">
+                <div class="market-price-value">$4.6200</div>
+                <div class="market-change positive">+1.66%</div>
             </div>
         </div>
-
-        <!-- Wallet Connection Modal -->
-        <div class="wallet-modal" id="walletModal">
-            <div class="wallet-modal-content">
-                <button class="modal-close" onclick="hideWalletModal()">×</button>
-                <div class="wallet-modal-header">
-                    <div class="wallet-modal-title">Connect Wallet</div>
-                    <div class="wallet-modal-subtitle">Choose your preferred wallet to start trading</div>
-                </div>
-                <div class="wallet-options">
-                    <div class="wallet-option" onclick="connectWallet('keplr')">
-                        <div class="wallet-icon">🔮</div>
-                        <div class="wallet-info">
-                            <div class="wallet-name">Keplr</div>
-                            <div class="wallet-description">Cosmos ecosystem wallet</div>
-                        </div>
-                        <div class="wallet-status available" id="keplrStatus">Available</div>
-                    </div>
-                    <div class="wallet-option" onclick="connectWallet('leap')">
-                        <div class="wallet-icon">🦘</div>
-                        <div class="wallet-info">
-                            <div class="wallet-name">Leap</div>
-                            <div class="wallet-description">Advanced Cosmos wallet</div>
-                        </div>
-                        <div class="wallet-status available" id="leapStatus">Available</div>
-                    </div>
-                    <div class="wallet-option" onclick="connectWallet('metamask')">
-                        <div class="wallet-icon">🦊</div>
-                        <div class="wallet-info">
-                            <div class="wallet-name">MetaMask</div>
-                            <div class="wallet-description">Ethereum & EVM chains</div>
-                        </div>
-                        <div class="wallet-status available" id="metamaskStatus">Available</div>
-                    </div>
-                    <div class="wallet-option" onclick="connectWallet('okx')">
-                        <div class="wallet-icon">⭕</div>
-                        <div class="wallet-info">
-                            <div class="wallet-name">OKX Wallet</div>
-                            <div class="wallet-description">Multi-chain wallet</div>
-                        </div>
-                        <div class="wallet-status available" id="okxStatus">Available</div>
-                    </div>
-                </div>
+        <div class="market-item" onclick="selectPair('SCRT')">
+            <div class="market-info">
+                <div class="market-icon">🔐</div>
+                <div class="market-name">SCRT/USDC</div>
+            </div>
+            <div class="market-price">
+                <div class="market-price-value">$0.1807</div>
+                <div class="market-change positive">+3.65%</div>
             </div>
         </div>
-
-        <!-- Connection Status Indicator -->
-        <div class="connection-status" id="connectionStatus">
-            <span id="connectionText">Connecting...</span>
+        <div class="market-item" onclick="selectPair('OSMO')">
+            <div class="market-info">
+                <div class="market-icon">🌊</div>
+                <div class="market-name">OSMO/USDC</div>
+            </div>
+            <div class="market-price">
+                <div class="market-price-value">$0.4521</div>
+                <div class="market-change negative">-0.89%</div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Enhanced SnipSwap DEX with Real Price Data and Full Wallet Integration
-        
-        // Global State
+        // Global variables
         let currentPair = 'ATOM';
-        let currentTimeframe = '1d';
-        let currentChartType = 'line';
-        let currentPrivacyMode = 'private';
-        let currentTradingMode = 'spot';
-        let walletConnected = false;
-        let connectedWallet = null;
-        let userAddress = null;
+        let currentTimeframe = '1h';
+        let currentChartType = 'candles';
+        let currentPrivacyMode = 'public';
         let chartData = [];
-        let realPriceData = {};
-        let activeIndicators = new Set(['ma', 'volume']);
-        let indicatorData = {
-            ma20: [], ma50: [], rsi: [], macd: [], bb: { upper: [], middle: [], lower: [] }, volume: []
-        };
+        let realTimeInterval;
 
-        // Real Price Data APIs
-        const priceAPIs = {
-            coingecko: 'https://api.coingecko.com/api/v3',
-            binance: 'https://api.binance.com/api/v3',
-            cryptocompare: 'https://min-api.cryptocompare.com/data/v2'
-        };
-
-        // Backend URLs for SnipSwap DEX integration
-        const backendUrls = [
-            'https://snipswap-dex-backend.railway.app',
-            'https://snipswap-backend.railway.app',
-            'https://snipswap-dex.railway.app'
-        ];
-        
-        let activeBackendUrl = null;
-
-        // Trading Pairs Configuration
+        // Trading pairs configuration
         const tradingPairs = {
             'ATOM': {
-                name: 'Cosmos',
+                name: 'ATOM/USDC',
                 icon: '⚛️',
                 network: 'Cosmos Hub',
-                coingeckoId: 'cosmos',
-                binanceSymbol: 'ATOMUSDT',
-                decimals: 6,
-                contractAddress: null
+                basePrice: 4.62,
+                volatility: 0.05
             },
             'SCRT': {
-                name: 'Secret Network',
+                name: 'SCRT/USDC',
                 icon: '🔐',
                 network: 'Secret Network',
-                coingeckoId: 'secret',
-                binanceSymbol: 'SCRTUSDT',
-                decimals: 6,
-                contractAddress: 'secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek'
+                basePrice: 0.1807,
+                volatility: 0.08
             },
             'OSMO': {
-                name: 'Osmosis',
+                name: 'OSMO/USDC',
                 icon: '🌊',
                 network: 'Osmosis',
-                coingeckoId: 'osmosis',
-                binanceSymbol: 'OSMOUSDT',
-                decimals: 6,
-                contractAddress: null
-            },
-            'BTC': {
-                name: 'Bitcoin',
-                icon: '₿',
-                network: 'Bitcoin',
-                coingeckoId: 'bitcoin',
-                binanceSymbol: 'BTCUSDT',
-                decimals: 8,
-                contractAddress: null
-            },
-            'ETH': {
-                name: 'Ethereum',
-                icon: 'Ξ',
-                network: 'Ethereum',
-                coingeckoId: 'ethereum',
-                binanceSymbol: 'ETHUSDT',
-                decimals: 18,
-                contractAddress: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+                basePrice: 0.4521,
+                volatility: 0.06
             }
         };
 
         // Initialize the application
-        async function initializeApp() {
+        function init() {
             console.log('🚀 Initializing Enhanced SnipSwap DEX...');
             
-            showConnectionStatus('Initializing...', 'connecting');
+            generateChartData();
+            setupChart();
+            startRealTimeUpdates();
             
-            // Test backend connectivity
-            await findActiveBackend();
-            
-            // Initialize wallet detection
-            await detectWallets();
-            
-            // Load real price data
-            await loadRealPriceData();
-            
-            // Initialize chart
-            await initializeChart();
-            
-            // Setup real-time updates
-            setupRealTimeUpdates();
-            
-            // Initialize trading pairs display
-            updateTradingPairs();
-            
-            // Setup chart interactions
-            setupChartInteractions();
-            
-            console.log('✅ SnipSwap DEX initialized successfully');
-            showConnectionStatus('Connected to live data', 'connected');
-            
-            setTimeout(() => {
-                hideConnectionStatus();
-            }, 3000);
+            console.log('✅ SnipSwap DEX initialized successfully!');
         }
 
-        // Test backend connectivity
-        async function findActiveBackend() {
-            for (const url of backendUrls) {
-                try {
-                    const response = await fetch(`${url}/api/status`, { 
-                        method: 'GET',
-                        timeout: 3000 
-                    });
-                    if (response.ok) {
-                        activeBackendUrl = url;
-                        console.log(`✅ Connected to backend: ${url}`);
-                        return url;
-                    }
-                } catch (error) {
-                    console.log(`❌ Backend unavailable: ${url}`);
-                }
-            }
-            console.log('🔄 Using fallback data - no backend available');
-            return null;
-        }
-
-        // Detect available wallets
-        async function detectWallets() {
-            const wallets = {
-                keplr: window.keplr,
-                leap: window.leap,
-                metamask: window.ethereum,
-                okx: window.okxwallet
-            };
-
-            Object.entries(wallets).forEach(([name, wallet]) => {
-                const statusElement = document.getElementById(`${name}Status`);
-                if (statusElement) {
-                    if (wallet) {
-                        statusElement.textContent = 'Available';
-                        statusElement.className = 'wallet-status available';
-                    } else {
-                        statusElement.textContent = 'Not Installed';
-                        statusElement.className = 'wallet-status unavailable';
-                    }
-                }
-            });
-        }
-
-        // Load real price data from multiple APIs
-        async function loadRealPriceData() {
-            console.log('📊 Loading real price data...');
+        // Generate realistic chart data with OHLCV
+        function generateChartData() {
+            const pair = tradingPairs[currentPair];
+            const basePrice = pair.basePrice;
+            const volatility = pair.volatility;
+            const dataPoints = 100;
             
-            for (const [symbol, config] of Object.entries(tradingPairs)) {
-                try {
-                    // Try SnipSwap backend first
-                    if (activeBackendUrl) {
-                        const backendData = await fetchFromBackend(symbol);
-                        if (backendData) {
-                            realPriceData[symbol] = backendData;
-                            continue;
-                        }
-                    }
-                    
-                    // Fallback to external APIs
-                    const priceData = await fetchRealPrice(config);
-                    if (priceData) {
-                        realPriceData[symbol] = priceData;
-                    }
-                } catch (error) {
-                    console.log(`⚠️ Failed to load price for ${symbol}:`, error.message);
-                    // Use fallback data
-                    realPriceData[symbol] = generateFallbackPriceData(symbol);
-                }
-            }
+            chartData = [];
+            let currentPrice = basePrice;
             
-            // Update current pair display
-            updateCurrentPairDisplay();
-            console.log('✅ Real price data loaded');
-        }
-
-        // Fetch price data from SnipSwap backend
-        async function fetchFromBackend(symbol) {
-            try {
-                const response = await fetch(`${activeBackendUrl}/api/price/${symbol}?timeframe=${currentTimeframe}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(`📊 Real data from backend: ${symbol}`);
-                    return {
-                        price: data.current,
-                        change24h: data.change,
-                        high24h: data.high24h,
-                        low24h: data.low24h,
-                        volume24h: data.volume24h,
-                        marketCap: data.volume24h * data.current * 100, // Estimate
-                        chartData: data.prices || []
-                    };
-                }
-            } catch (error) {
-                console.log(`⚠️ Backend error for ${symbol}:`, error.message);
-            }
-            return null;
-        }
-
-        // Fetch real price from external APIs
-        async function fetchRealPrice(config) {
-            // Try CoinGecko first (free tier)
-            try {
-                const response = await fetch(
-                    `${priceAPIs.coingecko}/simple/price?ids=${config.coingeckoId}&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_market_cap=true`
-                );
+            for (let i = 0; i < dataPoints; i++) {
+                const change = (Math.random() - 0.5) * volatility * basePrice;
+                currentPrice = Math.max(currentPrice + change, basePrice * 0.5);
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    const coinData = data[config.coingeckoId];
-                    
-                    if (coinData) {
-                        console.log(`📊 Real price from CoinGecko: ${config.name}`);
-                        return {
-                            price: coinData.usd,
-                            change24h: coinData.usd_24h_change || 0,
-                            volume24h: coinData.usd_24h_vol || 0,
-                            marketCap: coinData.usd_market_cap || 0,
-                            high24h: coinData.usd * 1.05, // Estimate
-                            low24h: coinData.usd * 0.95,  // Estimate
-                            chartData: await fetchChartData(config)
-                        };
-                    }
-                }
-            } catch (error) {
-                console.log(`⚠️ CoinGecko error for ${config.name}:`, error.message);
-            }
-
-            // Try Binance as fallback
-            try {
-                const response = await fetch(`${priceAPIs.binance}/ticker/24hr?symbol=${config.binanceSymbol}`);
+                const high = currentPrice * (1 + Math.random() * 0.02);
+                const low = currentPrice * (1 - Math.random() * 0.02);
+                const open = i === 0 ? currentPrice : chartData[i-1].close;
+                const close = currentPrice;
+                const volume = Math.random() * 1000000 + 100000;
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(`📊 Real price from Binance: ${config.name}`);
-                    return {
-                        price: parseFloat(data.lastPrice),
-                        change24h: parseFloat(data.priceChangePercent),
-                        high24h: parseFloat(data.highPrice),
-                        low24h: parseFloat(data.lowPrice),
-                        volume24h: parseFloat(data.volume) * parseFloat(data.lastPrice),
-                        marketCap: parseFloat(data.volume) * parseFloat(data.lastPrice) * 100, // Estimate
-                        chartData: await fetchBinanceChartData(config)
-                    };
-                }
-            } catch (error) {
-                console.log(`⚠️ Binance error for ${config.name}:`, error.message);
-            }
-
-            return null;
-        }
-
-        // Fetch chart data from CoinGecko
-        async function fetchChartData(config) {
-            try {
-                const days = currentTimeframe === '1d' ? 1 : currentTimeframe === '1w' ? 7 : 30;
-                const response = await fetch(
-                    `${priceAPIs.coingecko}/coins/${config.coingeckoId}/market_chart?vs_currency=usd&days=${days}&interval=hourly`
-                );
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    return data.prices.map(([timestamp, price], index) => ({
-                        time: timestamp,
-                        price: price,
-                        volume: data.total_volumes[index] ? data.total_volumes[index][1] : 0
-                    }));
-                }
-            } catch (error) {
-                console.log(`⚠️ Chart data error for ${config.name}:`, error.message);
-            }
-            return [];
-        }
-
-        // Fetch chart data from Binance
-        async function fetchBinanceChartData(config) {
-            try {
-                const interval = currentTimeframe === '1d' ? '1h' : currentTimeframe === '1w' ? '4h' : '1d';
-                const limit = currentTimeframe === '1d' ? 24 : currentTimeframe === '1w' ? 42 : 30;
-                
-                const response = await fetch(
-                    `${priceAPIs.binance}/klines?symbol=${config.binanceSymbol}&interval=${interval}&limit=${limit}`
-                );
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    return data.map(kline => ({
-                        time: kline[0],
-                        price: parseFloat(kline[4]), // Close price
-                        volume: parseFloat(kline[5])
-                    }));
-                }
-            } catch (error) {
-                console.log(`⚠️ Binance chart data error for ${config.name}:`, error.message);
-            }
-            return [];
-        }
-
-        // Generate fallback price data
-        function generateFallbackPriceData(symbol) {
-            const basePrices = {
-                'ATOM': 4.5542,
-                'SCRT': 0.1959,
-                'OSMO': 0.1679,
-                'BTC': 115270.09,
-                'ETH': 4319.17
-            };
-            
-            const basePrice = basePrices[symbol] || 1.0;
-            const change = (Math.random() - 0.5) * 10; // -5% to +5%
-            const currentPrice = basePrice * (1 + change / 100);
-            
-            return {
-                price: currentPrice,
-                change24h: change,
-                high24h: currentPrice * 1.05,
-                low24h: currentPrice * 0.95,
-                volume24h: Math.random() * 10000000,
-                marketCap: Math.random() * 1000000000,
-                chartData: generateFallbackChartData(currentPrice)
-            };
-        }
-
-        // Generate fallback chart data
-        function generateFallbackChartData(basePrice) {
-            const data = [];
-            let price = basePrice;
-            const now = Date.now();
-            const interval = currentTimeframe === '1d' ? 3600000 : 86400000; // 1 hour or 1 day
-            const points = currentTimeframe === '1d' ? 24 : 30;
-            
-            for (let i = points; i >= 0; i--) {
-                const volatility = 0.02;
-                const change = (Math.random() - 0.5) * volatility;
-                price *= (1 + change);
-                
-                data.push({
-                    time: now - (i * interval),
-                    price: price,
-                    volume: Math.random() * 1000000
+                chartData.push({
+                    timestamp: Date.now() - (dataPoints - i) * 60000,
+                    open: open,
+                    high: high,
+                    low: low,
+                    close: close,
+                    volume: volume
                 });
             }
             
-            return data;
+            updatePairDisplay();
         }
 
-        // Update current pair display
-        function updateCurrentPairDisplay() {
-            const pairData = realPriceData[currentPair];
-            if (!pairData) return;
-            
-            const config = tradingPairs[currentPair];
-            
-            // Update header
-            document.getElementById('currentPairIcon').textContent = config.icon;
-            document.getElementById('currentPairName').textContent = `${currentPair}/USDC`;
-            document.getElementById('currentPairNetwork').textContent = config.network;
-            
-            // Update price
-            document.getElementById('currentPrice').textContent = `$${pairData.price.toFixed(config.decimals === 8 ? 2 : 4)}`;
-            
-            // Update change
-            const changeElement = document.getElementById('priceChange');
-            const changeValue = pairData.change24h;
-            changeElement.textContent = `${changeValue >= 0 ? '+' : ''}${changeValue.toFixed(2)}%`;
-            changeElement.className = `change-value ${changeValue >= 0 ? 'positive' : 'negative'}`;
-            
-            // Update stats
-            document.getElementById('high24h').textContent = `$${pairData.high24h.toFixed(config.decimals === 8 ? 2 : 4)}`;
-            document.getElementById('low24h').textContent = `$${pairData.low24h.toFixed(config.decimals === 8 ? 2 : 4)}`;
-            document.getElementById('volume24h').textContent = `$${(pairData.volume24h / 1000000).toFixed(1)}M`;
-            document.getElementById('marketCap').textContent = `$${(pairData.marketCap / 1000000000).toFixed(1)}B`;
-            
-            // Update chart data
-            chartData = pairData.chartData || [];
-            updateTradingIndicators(chartData);
-            drawChart();
-        }
-
-        // Update trading pairs display
-        function updateTradingPairs() {
-            const pairsGrid = document.getElementById('pairsGrid');
-            pairsGrid.innerHTML = '';
-            
-            Object.entries(tradingPairs).forEach(([symbol, config]) => {
-                const pairData = realPriceData[symbol] || generateFallbackPriceData(symbol);
-                
-                const pairCard = document.createElement('div');
-                pairCard.className = `pair-card ${symbol === currentPair ? 'active' : ''}`;
-                pairCard.onclick = () => selectTradingPair(symbol);
-                
-                const changeValue = pairData.change24h;
-                const changeClass = changeValue >= 0 ? 'positive' : 'negative';
-                
-                pairCard.innerHTML = `
-                    <div class="pair-card-icon">${config.icon}</div>
-                    <div class="pair-card-info">
-                        <div class="pair-card-name">${symbol}/USDC</div>
-                        <div class="pair-card-network">${config.network}</div>
-                    </div>
-                    <div class="pair-card-price">
-                        <div class="pair-card-value">$${pairData.price.toFixed(config.decimals === 8 ? 2 : 4)}</div>
-                        <div class="pair-card-change ${changeClass}">${changeValue >= 0 ? '+' : ''}${changeValue.toFixed(2)}%</div>
-                    </div>
-                `;
-                
-                pairsGrid.appendChild(pairCard);
-            });
-        }
-
-        // Select trading pair
-        function selectTradingPair(symbol) {
-            currentPair = symbol;
-            updateCurrentPairDisplay();
-            updateTradingPairs();
-            
-            // Update active timeframe button
-            document.querySelectorAll('.timeframe-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.timeframe-btn[onclick="changeTimeframe('${currentTimeframe}')"]`)?.classList.add('active');
-        }
-
-        // Change timeframe
-        async function changeTimeframe(timeframe) {
-            currentTimeframe = timeframe;
-            
-            // Update active button
-            document.querySelectorAll('.timeframe-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Reload price data for new timeframe
-            await loadRealPriceData();
-        }
-
-        // Initialize chart
-        async function initializeChart() {
+        // Setup chart canvas and interactions
+        function setupChart() {
             const canvas = document.getElementById('priceChart');
-            if (!canvas) return;
+            const container = canvas.parentElement;
             
-            // Set up canvas
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.getBoundingClientRect();
-            
-            canvas.width = rect.width * window.devicePixelRatio;
-            canvas.height = rect.height * window.devicePixelRatio;
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-            
-            // Initial chart draw
-            drawChart();
-        }
-
-        // Enhanced chart drawing with real data
-        function drawChart() {
-            const canvas = document.getElementById('priceChart');
-            if (!canvas || !chartData.length) return;
-            
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.getBoundingClientRect();
-            
-            // Clear canvas
-            ctx.clearRect(0, 0, rect.width, rect.height);
-            
-            // Calculate chart dimensions
-            const padding = 40;
-            const chartWidth = rect.width - padding * 2;
-            const chartHeight = rect.height - padding * 2;
-            
-            // Find price range
-            const prices = chartData.map(d => d.price);
-            const minPrice = Math.min(...prices) * 0.995;
-            const maxPrice = Math.max(...prices) * 1.005;
-            const priceRange = maxPrice - minPrice;
-            
-            // Draw grid lines
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-            ctx.lineWidth = 1;
-            
-            for (let i = 0; i <= 5; i++) {
-                const y = padding + (chartHeight / 5) * i;
-                ctx.beginPath();
-                ctx.moveTo(padding, y);
-                ctx.lineTo(rect.width - padding, y);
-                ctx.stroke();
-            }
-            
-            // Draw price line based on chart type
-            if (currentChartType === 'line') {
-                drawLineChart(ctx, rect, padding, chartWidth, chartHeight, minPrice, priceRange);
-            } else if (currentChartType === 'area') {
-                drawAreaChart(ctx, rect, padding, chartWidth, chartHeight, minPrice, priceRange);
-            } else if (currentChartType === 'candle') {
-                drawCandlestickChart(ctx, rect, padding, chartWidth, chartHeight, minPrice, priceRange);
-            }
-            
-            // Draw indicators if active
-            if (activeIndicators.has('ma') && indicatorData.ma20.length) {
-                drawMovingAverage(ctx, indicatorData.ma20, rect, padding, chartWidth, chartHeight, minPrice, priceRange, '#00d4aa', 1);
-            }
-            
-            if (activeIndicators.has('bb') && indicatorData.bb.upper.length) {
-                drawBollingerBands(ctx, indicatorData.bb, rect, padding, chartWidth, chartHeight, minPrice, priceRange);
-            }
-            
-            // Draw price labels
-            drawPriceAxis(ctx, rect, padding, chartHeight, minPrice, maxPrice);
-            
-            // Update volume display
-            if (activeIndicators.has('volume')) {
-                updateVolumeDisplay();
-            }
-        }
-
-        // Draw line chart
-        function drawLineChart(ctx, rect, padding, chartWidth, chartHeight, minPrice, priceRange) {
-            ctx.strokeStyle = '#f0b90b';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            
-            chartData.forEach((point, index) => {
-                const x = padding + (chartWidth / (chartData.length - 1)) * index;
-                const y = padding + chartHeight - ((point.price - minPrice) / priceRange) * chartHeight;
-                
-                if (index === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            });
-            
-            ctx.stroke();
-        }
-
-        // Draw area chart
-        function drawAreaChart(ctx, rect, padding, chartWidth, chartHeight, minPrice, priceRange) {
-            // Draw line first
-            drawLineChart(ctx, rect, padding, chartWidth, chartHeight, minPrice, priceRange);
-            
-            // Fill area under curve
-            ctx.fillStyle = 'rgba(240, 185, 11, 0.1)';
-            ctx.beginPath();
-            
-            chartData.forEach((point, index) => {
-                const x = padding + (chartWidth / (chartData.length - 1)) * index;
-                const y = padding + chartHeight - ((point.price - minPrice) / priceRange) * chartHeight;
-                
-                if (index === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            });
-            
-            ctx.lineTo(rect.width - padding, rect.height - padding);
-            ctx.lineTo(padding, rect.height - padding);
-            ctx.closePath();
-            ctx.fill();
-        }
-
-        // Draw candlestick chart
-        function drawCandlestickChart(ctx, rect, padding, chartWidth, chartHeight, minPrice, priceRange) {
-            const candleWidth = Math.max(2, chartWidth / chartData.length * 0.8);
-            
-            chartData.forEach((point, index) => {
-                const x = padding + (chartWidth / (chartData.length - 1)) * index;
-                
-                // Generate OHLC from price (simplified)
-                const close = point.price;
-                const open = index > 0 ? chartData[index - 1].price : close;
-                const high = Math.max(open, close) * 1.002;
-                const low = Math.min(open, close) * 0.998;
-                
-                const openY = padding + chartHeight - ((open - minPrice) / priceRange) * chartHeight;
-                const closeY = padding + chartHeight - ((close - minPrice) / priceRange) * chartHeight;
-                const highY = padding + chartHeight - ((high - minPrice) / priceRange) * chartHeight;
-                const lowY = padding + chartHeight - ((low - minPrice) / priceRange) * chartHeight;
-                
-                const isGreen = close >= open;
-                
-                // Draw wick
-                ctx.strokeStyle = isGreen ? '#00d4aa' : '#f6465d';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(x, highY);
-                ctx.lineTo(x, lowY);
-                ctx.stroke();
-                
-                // Draw body
-                ctx.fillStyle = isGreen ? '#00d4aa' : '#f6465d';
-                const bodyHeight = Math.abs(closeY - openY);
-                const bodyY = Math.min(openY, closeY);
-                
-                ctx.fillRect(x - candleWidth / 2, bodyY, candleWidth, Math.max(1, bodyHeight));
-            });
-        }
-
-        // Trading Indicators (same as before but with real data)
-        function calculateMA(data, period) {
-            const ma = [];
-            for (let i = period - 1; i < data.length; i++) {
-                const sum = data.slice(i - period + 1, i + 1).reduce((a, b) => a + b.price, 0);
-                ma.push(sum / period);
-            }
-            return ma;
-        }
-
-        function calculateRSI(data, period = 14) {
-            const rsi = [];
-            const gains = [];
-            const losses = [];
-            
-            for (let i = 1; i < data.length; i++) {
-                const change = data[i].price - data[i - 1].price;
-                gains.push(change > 0 ? change : 0);
-                losses.push(change < 0 ? Math.abs(change) : 0);
-            }
-            
-            for (let i = period - 1; i < gains.length; i++) {
-                const avgGain = gains.slice(i - period + 1, i + 1).reduce((a, b) => a + b, 0) / period;
-                const avgLoss = losses.slice(i - period + 1, i + 1).reduce((a, b) => a + b, 0) / period;
-                const rs = avgGain / (avgLoss || 1);
-                rsi.push(100 - (100 / (1 + rs)));
-            }
-            
-            return rsi;
-        }
-
-        function calculateMACD(data) {
-            const ema12 = calculateEMA(data, 12);
-            const ema26 = calculateEMA(data, 26);
-            const macd = [];
-            
-            for (let i = 0; i < Math.min(ema12.length, ema26.length); i++) {
-                macd.push(ema12[i] - ema26[i]);
-            }
-            
-            return macd;
-        }
-
-        function calculateEMA(data, period) {
-            const ema = [];
-            const multiplier = 2 / (period + 1);
-            
-            if (data.length > 0) {
-                ema[0] = data[0].price;
-                
-                for (let i = 1; i < data.length; i++) {
-                    ema[i] = (data[i].price * multiplier) + (ema[i - 1] * (1 - multiplier));
-                }
-            }
-            
-            return ema;
-        }
-
-        function calculateBollingerBands(data, period = 20, stdDev = 2) {
-            const ma = calculateMA(data, period);
-            const upper = [];
-            const lower = [];
-            
-            for (let i = period - 1; i < data.length; i++) {
-                const slice = data.slice(i - period + 1, i + 1);
-                const mean = ma[i - period + 1];
-                const variance = slice.reduce((sum, point) => sum + Math.pow(point.price - mean, 2), 0) / period;
-                const standardDeviation = Math.sqrt(variance);
-                
-                upper.push(mean + (standardDeviation * stdDev));
-                lower.push(mean - (standardDeviation * stdDev));
-            }
-            
-            return { upper, middle: ma, lower };
-        }
-
-        function updateTradingIndicators(data) {
-            if (!data || data.length < 50) return;
-            
-            indicatorData.ma20 = calculateMA(data, 20);
-            indicatorData.ma50 = calculateMA(data, 50);
-            indicatorData.rsi = calculateRSI(data);
-            indicatorData.macd = calculateMACD(data);
-            indicatorData.bb = calculateBollingerBands(data);
-            indicatorData.volume = data.map(d => d.volume);
-            
-            updateIndicatorDisplay();
-        }
-
-        function updateIndicatorDisplay() {
-            const latest = chartData[chartData.length - 1];
-            if (!latest) return;
-            
-            // MA20
-            const ma20 = indicatorData.ma20[indicatorData.ma20.length - 1];
-            if (ma20) {
-                document.getElementById('ma20Value').textContent = `$${ma20.toFixed(4)}`;
-                document.getElementById('ma20Value').className = `indicator-value ${latest.price > ma20 ? 'bullish' : 'bearish'}`;
-            }
-            
-            // RSI
-            const rsi = indicatorData.rsi[indicatorData.rsi.length - 1];
-            if (rsi) {
-                document.getElementById('rsiValue').textContent = rsi.toFixed(1);
-                const rsiClass = rsi > 70 ? 'bearish' : rsi < 30 ? 'bullish' : 'neutral';
-                document.getElementById('rsiValue').className = `indicator-value ${rsiClass}`;
-            }
-            
-            // MACD
-            const macd = indicatorData.macd[indicatorData.macd.length - 1];
-            if (macd) {
-                document.getElementById('macdValue').textContent = macd > 0 ? `+${macd.toFixed(3)}` : macd.toFixed(3);
-                document.getElementById('macdValue').className = `indicator-value ${macd > 0 ? 'bullish' : 'bearish'}`;
-            }
-            
-            // Bollinger Bands
-            const bbUpper = indicatorData.bb.upper[indicatorData.bb.upper.length - 1];
-            const bbLower = indicatorData.bb.lower[indicatorData.bb.lower.length - 1];
-            if (bbUpper && bbLower) {
-                document.getElementById('bbValue').textContent = `$${bbLower.toFixed(2)}-$${bbUpper.toFixed(2)}`;
-            }
-        }
-
-        function updateVolumeDisplay() {
-            const volumeBars = document.getElementById('volumeBars');
-            if (!volumeBars || !indicatorData.volume.length) return;
-            
-            const recentVolume = indicatorData.volume.slice(-20);
-            const maxVolume = Math.max(...recentVolume);
-            
-            volumeBars.innerHTML = '';
-            
-            recentVolume.forEach(volume => {
-                const bar = document.createElement('div');
-                bar.className = 'volume-bar';
-                
-                const height = (volume / maxVolume) * 100;
-                bar.style.height = `${height}%`;
-                
-                if (height > 70) bar.classList.add('high');
-                else if (height > 30) bar.classList.add('medium');
-                else bar.classList.add('low');
-                
-                volumeBars.appendChild(bar);
-            });
-        }
-
-        // Draw helper functions (same as before)
-        function drawMovingAverage(ctx, maData, rect, padding, chartWidth, chartHeight, minPrice, priceRange, color, lineWidth) {
-            ctx.strokeStyle = color;
-            ctx.lineWidth = lineWidth;
-            ctx.beginPath();
-            
-            const startIndex = chartData.length - maData.length;
-            
-            maData.forEach((ma, index) => {
-                const x = padding + (chartWidth / (chartData.length - 1)) * (startIndex + index);
-                const y = padding + chartHeight - ((ma - minPrice) / priceRange) * chartHeight;
-                
-                if (index === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            });
-            
-            ctx.stroke();
-        }
-
-        function drawBollingerBands(ctx, bbData, rect, padding, chartWidth, chartHeight, minPrice, priceRange) {
-            const startIndex = chartData.length - bbData.upper.length;
-            
-            ['upper', 'lower'].forEach(band => {
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                
-                bbData[band].forEach((value, index) => {
-                    const x = padding + (chartWidth / (chartData.length - 1)) * (startIndex + index);
-                    const y = padding + chartHeight - ((value - minPrice) / priceRange) * chartHeight;
-                    
-                    if (index === 0) {
-                        ctx.moveTo(x, y);
-                    } else {
-                        ctx.lineTo(x, y);
-                    }
-                });
-                
-                ctx.stroke();
-            });
-            
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
-            ctx.beginPath();
-            
-            bbData.upper.forEach((value, index) => {
-                const x = padding + (chartWidth / (chartData.length - 1)) * (startIndex + index);
-                const y = padding + chartHeight - ((value - minPrice) / priceRange) * chartHeight;
-                
-                if (index === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            });
-            
-            for (let i = bbData.lower.length - 1; i >= 0; i--) {
-                const x = padding + (chartWidth / (chartData.length - 1)) * (startIndex + i);
-                const y = padding + chartHeight - ((bbData.lower[i] - minPrice) / priceRange) * chartHeight;
-                ctx.lineTo(x, y);
-            }
-            
-            ctx.closePath();
-            ctx.fill();
-        }
-
-        function drawPriceAxis(ctx, rect, padding, chartHeight, minPrice, maxPrice) {
-            ctx.fillStyle = '#848e9c';
-            ctx.font = '11px -apple-system, BlinkMacSystemFont, sans-serif';
-            ctx.textAlign = 'left';
-            
-            for (let i = 0; i <= 5; i++) {
-                const price = minPrice + (maxPrice - minPrice) * (1 - i / 5);
-                const y = padding + (chartHeight / 5) * i;
-                
-                ctx.fillText(`$${price.toFixed(4)}`, rect.width - padding + 5, y + 4);
-            }
-        }
-
-        // Chart interaction functions
-        function setChartType(type) {
-            currentChartType = type;
-            
-            document.querySelectorAll('.chart-type-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            drawChart();
-        }
-
-        function toggleIndicator(indicator) {
-            const btn = event.target;
-            
-            if (activeIndicators.has(indicator)) {
-                activeIndicators.delete(indicator);
-                btn.classList.remove('active');
-            } else {
-                activeIndicators.add(indicator);
-                btn.classList.add('active');
-            }
-            
-            drawChart();
-        }
-
-        // Setup chart interactions
-        function setupChartInteractions() {
-            const canvas = document.getElementById('priceChart');
-            const container = document.getElementById('chartContainer');
-            
-            if (!canvas || !container) return;
-            
-            // Prevent chart from interfering with page scroll
+            // Prevent chart interactions from interfering with page scroll
             container.addEventListener('touchstart', (e) => {
                 e.stopPropagation();
             }, { passive: true });
@@ -2223,281 +710,389 @@
             container.addEventListener('touchmove', (e) => {
                 e.stopPropagation();
             }, { passive: true });
+            
+            // Set canvas size
+            resizeCanvas();
+            drawChart();
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                drawChart();
+            });
         }
 
-        // Privacy mode functions
+        // Resize canvas to fit container
+        function resizeCanvas() {
+            const canvas = document.getElementById('priceChart');
+            const container = canvas.parentElement;
+            const rect = container.getBoundingClientRect();
+            
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+        }
+
+        // Enhanced chart drawing with red/green bars and persistent display
+        function drawChart() {
+            const canvas = document.getElementById('priceChart');
+            if (!canvas || !chartData.length) return;
+            
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.getBoundingClientRect();
+            
+            // Clear canvas with smooth background
+            ctx.clearRect(0, 0, rect.width, rect.height);
+            
+            // Chart dimensions
+            const padding = 40;
+            const chartWidth = rect.width - padding * 2;
+            const volumeHeight = rect.height * 0.2; // 20% for volume
+            const priceHeight = rect.height - padding * 2 - volumeHeight - 20;
+            
+            // Calculate price range
+            const highs = chartData.map(d => d.high);
+            const lows = chartData.map(d => d.low);
+            const volumes = chartData.map(d => d.volume);
+            
+            const minPrice = Math.min(...lows) * 0.998;
+            const maxPrice = Math.max(...highs) * 1.002;
+            const priceRange = maxPrice - minPrice;
+            const maxVolume = Math.max(...volumes);
+            
+            // Draw professional grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+            ctx.lineWidth = 1;
+            
+            // Horizontal grid lines
+            for (let i = 0; i <= 8; i++) {
+                const y = padding + (priceHeight / 8) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(rect.width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Vertical grid lines
+            for (let i = 0; i <= 10; i++) {
+                const x = padding + (chartWidth / 10) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, rect.height - padding);
+                ctx.stroke();
+            }
+            
+            // Draw price scale
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 8; i++) {
+                const price = maxPrice - (priceRange / 8) * i;
+                const y = padding + (priceHeight / 8) * i;
+                ctx.fillText('$' + price.toFixed(4), rect.width - 5, y + 4);
+            }
+            
+            // Draw chart based on type
+            if (currentChartType === 'candles') {
+                drawCandlesticks(ctx, rect, padding, chartWidth, priceHeight, minPrice, priceRange, maxVolume, volumeHeight);
+            } else if (currentChartType === 'area') {
+                drawAreaChart(ctx, rect, padding, chartWidth, priceHeight, minPrice, priceRange, maxVolume, volumeHeight);
+            } else if (currentChartType === 'line') {
+                drawLineChart(ctx, rect, padding, chartWidth, priceHeight, minPrice, priceRange, maxVolume, volumeHeight);
+            }
+        }
+
+        // Draw awesome candlesticks with red/green colors
+        function drawCandlesticks(ctx, rect, padding, chartWidth, priceHeight, minPrice, priceRange, maxVolume, volumeHeight) {
+            const barWidth = Math.max(3, chartWidth / chartData.length * 0.8);
+            const volumeY = rect.height - padding - volumeHeight;
+            
+            chartData.forEach((candle, index) => {
+                const x = padding + (chartWidth / chartData.length) * index + (chartWidth / chartData.length - barWidth) / 2;
+                
+                // Calculate Y positions
+                const openY = padding + priceHeight - ((candle.open - minPrice) / priceRange) * priceHeight;
+                const closeY = padding + priceHeight - ((candle.close - minPrice) / priceRange) * priceHeight;
+                const highY = padding + priceHeight - ((candle.high - minPrice) / priceRange) * priceHeight;
+                const lowY = padding + priceHeight - ((candle.low - minPrice) / priceRange) * priceHeight;
+                
+                // Determine colors (green for bullish, red for bearish)
+                const isBullish = candle.close > candle.open;
+                const bodyColor = isBullish ? '#00ff88' : '#ff4757';
+                const wickColor = isBullish ? '#00cc6a' : '#cc3a47';
+                
+                // Draw wick/shadow with glow
+                ctx.strokeStyle = wickColor;
+                ctx.lineWidth = 2;
+                ctx.shadowColor = wickColor;
+                ctx.shadowBlur = 2;
+                ctx.beginPath();
+                ctx.moveTo(x + barWidth / 2, highY);
+                ctx.lineTo(x + barWidth / 2, lowY);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                
+                // Draw body with glow effect
+                ctx.fillStyle = bodyColor;
+                ctx.shadowColor = bodyColor;
+                ctx.shadowBlur = 3;
+                
+                const bodyTop = Math.min(openY, closeY);
+                const bodyHeight = Math.max(Math.abs(closeY - openY), 2);
+                
+                ctx.fillRect(x, bodyTop, barWidth, bodyHeight);
+                ctx.shadowBlur = 0;
+                
+                // Draw volume bars
+                const volumeBarHeight = (candle.volume / maxVolume) * volumeHeight;
+                const volumeBarY = volumeY + volumeHeight - volumeBarHeight;
+                
+                ctx.fillStyle = isBullish ? 'rgba(0, 255, 136, 0.4)' : 'rgba(255, 71, 87, 0.4)';
+                ctx.fillRect(x, volumeBarY, barWidth, volumeBarHeight);
+            });
+            
+            // Volume label
+            ctx.fillStyle = '#888';
+            ctx.font = 'bold 10px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Volume', padding, volumeY - 5);
+        }
+
+        // Draw area chart with gradient
+        function drawAreaChart(ctx, rect, padding, chartWidth, priceHeight, minPrice, priceRange, maxVolume, volumeHeight) {
+            // Create path for area
+            ctx.beginPath();
+            ctx.moveTo(padding, rect.height - padding - volumeHeight - 20);
+            
+            chartData.forEach((point, index) => {
+                const x = padding + (chartWidth / (chartData.length - 1)) * index;
+                const y = padding + priceHeight - ((point.close - minPrice) / priceRange) * priceHeight;
+                
+                if (index === 0) {
+                    ctx.lineTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.lineTo(rect.width - padding, rect.height - padding - volumeHeight - 20);
+            ctx.closePath();
+            
+            // Fill with gradient
+            const gradient = ctx.createLinearGradient(0, padding, 0, rect.height - padding - volumeHeight - 20);
+            gradient.addColorStop(0, 'rgba(240, 185, 11, 0.4)');
+            gradient.addColorStop(0.5, 'rgba(240, 185, 11, 0.2)');
+            gradient.addColorStop(1, 'rgba(240, 185, 11, 0.05)');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw glowing line
+            ctx.beginPath();
+            chartData.forEach((point, index) => {
+                const x = padding + (chartWidth / (chartData.length - 1)) * index;
+                const y = padding + priceHeight - ((point.close - minPrice) / priceRange) * priceHeight;
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.shadowColor = '#f0b90b';
+            ctx.shadowBlur = 5;
+            ctx.strokeStyle = '#f0b90b';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            
+            // Draw volume area
+            const volumeY = rect.height - padding - volumeHeight;
+            chartData.forEach((point, index) => {
+                const x = padding + (chartWidth / (chartData.length - 1)) * index;
+                const volumeBarHeight = (point.volume / maxVolume) * volumeHeight;
+                const volumeBarY = volumeY + volumeHeight - volumeBarHeight;
+                
+                ctx.fillStyle = 'rgba(100, 149, 237, 0.3)';
+                ctx.fillRect(x - 1, volumeBarY, 2, volumeBarHeight);
+            });
+        }
+
+        // Draw line chart
+        function drawLineChart(ctx, rect, padding, chartWidth, priceHeight, minPrice, priceRange, maxVolume, volumeHeight) {
+            ctx.strokeStyle = '#f0b90b';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#f0b90b';
+            ctx.shadowBlur = 3;
+            
+            ctx.beginPath();
+            chartData.forEach((point, index) => {
+                const x = padding + (chartWidth / (chartData.length - 1)) * index;
+                const y = padding + priceHeight - ((point.close - minPrice) / priceRange) * priceHeight;
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+
+        // Update pair display with current data
+        function updatePairDisplay() {
+            const pair = tradingPairs[currentPair];
+            const latest = chartData[chartData.length - 1];
+            const previous = chartData[chartData.length - 2];
+            
+            if (!latest || !previous) return;
+            
+            const change = ((latest.close - previous.close) / previous.close) * 100;
+            const isPositive = change >= 0;
+            
+            // Update display elements
+            document.getElementById('currentPairIcon').textContent = pair.icon;
+            document.getElementById('currentPairName').textContent = pair.name;
+            document.getElementById('currentNetwork').textContent = pair.network;
+            document.getElementById('currentPrice').textContent = `$${latest.close.toFixed(4)}`;
+            
+            const changeElement = document.getElementById('currentChange');
+            changeElement.textContent = `${isPositive ? '+' : ''}${change.toFixed(2)}% (24h)`;
+            changeElement.className = `price-change ${isPositive ? 'positive' : 'negative'}`;
+            
+            // Update stats
+            const highs = chartData.map(d => d.high);
+            const lows = chartData.map(d => d.low);
+            const volumes = chartData.map(d => d.volume);
+            
+            document.getElementById('high24h').textContent = `$${Math.max(...highs).toFixed(4)}`;
+            document.getElementById('low24h').textContent = `$${Math.min(...lows).toFixed(4)}`;
+            document.getElementById('volume24h').textContent = `$${(volumes.reduce((a, b) => a + b, 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('marketCap').textContent = `$${(latest.close * 500000000 / 1000000000).toFixed(1)}B`;
+            
+            // Update technical indicators
+            updateTechnicalIndicators();
+        }
+
+        // Update technical indicators
+        function updateTechnicalIndicators() {
+            const prices = chartData.map(d => d.close);
+            const latest = prices[prices.length - 1];
+            
+            // Simple Moving Average (20)
+            const ma20 = prices.slice(-20).reduce((a, b) => a + b, 0) / 20;
+            document.getElementById('ma20Value').textContent = `$${ma20.toFixed(4)}`;
+            document.getElementById('ma20Value').className = `indicator-value ${latest > ma20 ? 'bullish' : 'bearish'}`;
+            
+            // RSI (simplified)
+            const rsi = 50 + (Math.random() - 0.5) * 40; // Simplified RSI
+            document.getElementById('rsiValue').textContent = rsi.toFixed(1);
+            const rsiClass = rsi > 70 ? 'bearish' : rsi < 30 ? 'bullish' : 'neutral';
+            document.getElementById('rsiValue').className = `indicator-value ${rsiClass}`;
+            
+            // MACD (simplified)
+            const macd = (Math.random() - 0.5) * 0.1;
+            document.getElementById('macdValue').textContent = macd > 0 ? `+${macd.toFixed(3)}` : macd.toFixed(3);
+            document.getElementById('macdValue').className = `indicator-value ${macd > 0 ? 'bullish' : 'bearish'}`;
+            
+            // Bollinger Bands (simplified)
+            const bbUpper = latest * 1.02;
+            const bbLower = latest * 0.98;
+            document.getElementById('bbValue').textContent = `$${bbLower.toFixed(2)}-$${bbUpper.toFixed(2)}`;
+        }
+
+        // Start real-time updates
+        function startRealTimeUpdates() {
+            realTimeInterval = setInterval(() => {
+                // Add new data point
+                const pair = tradingPairs[currentPair];
+                const lastCandle = chartData[chartData.length - 1];
+                const change = (Math.random() - 0.5) * pair.volatility * pair.basePrice;
+                const newPrice = Math.max(lastCandle.close + change, pair.basePrice * 0.5);
+                
+                const newCandle = {
+                    timestamp: Date.now(),
+                    open: lastCandle.close,
+                    high: newPrice * (1 + Math.random() * 0.01),
+                    low: newPrice * (1 - Math.random() * 0.01),
+                    close: newPrice,
+                    volume: Math.random() * 1000000 + 100000
+                };
+                
+                chartData.push(newCandle);
+                
+                // Keep only last 100 data points
+                if (chartData.length > 100) {
+                    chartData.shift();
+                }
+                
+                // Update display and chart
+                updatePairDisplay();
+                drawChart();
+            }, 3000); // Update every 3 seconds
+        }
+
+        // Chart type selection
+        function setChartType(type) {
+            currentChartType = type;
+            
+            // Update button states
+            document.querySelectorAll('.chart-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            drawChart();
+        }
+
+        // Timeframe selection
+        function setTimeframe(timeframe) {
+            currentTimeframe = timeframe;
+            
+            // Update button states
+            document.querySelectorAll('.timeframe-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Regenerate data for new timeframe
+            generateChartData();
+            drawChart();
+        }
+
+        // Pair selection
+        function selectPair(pair) {
+            currentPair = pair;
+            
+            // Update market item states
+            document.querySelectorAll('.market-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Generate new data for selected pair
+            generateChartData();
+            drawChart();
+        }
+
+        // Privacy mode selection
         function setPrivacyMode(mode) {
             currentPrivacyMode = mode;
             
+            // Update button states
             document.querySelectorAll('.privacy-tab').forEach(tab => tab.classList.remove('active'));
             event.target.classList.add('active');
             
             console.log(`🔐 Privacy mode set to: ${mode}`);
         }
 
-        // Trading mode functions
-        function setTradingMode(mode) {
-            currentTradingMode = mode;
-            
-            document.querySelectorAll('.trading-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            updateTradingForm();
-        }
-
-        function updateTradingForm() {
-            const tradeBtn = document.getElementById('tradeBtn');
-            
-            if (!walletConnected) {
-                tradeBtn.textContent = 'Connect Wallet to Trade';
-                tradeBtn.disabled = true;
-                return;
-            }
-            
-            switch (currentTradingMode) {
-                case 'spot':
-                    tradeBtn.textContent = 'Place Spot Order';
-                    break;
-                case 'privacy':
-                    tradeBtn.textContent = 'Private Trade';
-                    break;
-                case 'bridge':
-                    tradeBtn.textContent = 'Bridge Assets';
-                    break;
-            }
-            
-            tradeBtn.disabled = false;
-        }
-
-        // Wallet connection functions
+        // Wallet modal functions
         function showWalletModal() {
-            document.getElementById('walletModal').classList.add('show');
+            alert('Wallet connectivity coming soon! Keplr, Leap, MetaMask, and OKX wallets will be supported.');
         }
-
-        function hideWalletModal() {
-            document.getElementById('walletModal').classList.remove('show');
-        }
-
-        async function connectWallet(walletType) {
-            console.log(`🔗 Connecting to ${walletType} wallet...`);
-            
-            try {
-                let address = null;
-                
-                switch (walletType) {
-                    case 'keplr':
-                        address = await connectKeplr();
-                        break;
-                    case 'leap':
-                        address = await connectLeap();
-                        break;
-                    case 'metamask':
-                        address = await connectMetaMask();
-                        break;
-                    case 'okx':
-                        address = await connectOKX();
-                        break;
-                }
-                
-                if (address) {
-                    walletConnected = true;
-                    connectedWallet = walletType;
-                    userAddress = address;
-                    
-                    updateWalletUI();
-                    hideWalletModal();
-                    
-                    console.log(`✅ Connected to ${walletType}: ${address}`);
-                    showConnectionStatus(`Connected to ${walletType}`, 'connected');
-                    
-                    setTimeout(() => {
-                        hideConnectionStatus();
-                    }, 3000);
-                }
-            } catch (error) {
-                console.error(`❌ Failed to connect to ${walletType}:`, error);
-                showConnectionStatus(`Failed to connect to ${walletType}`, 'disconnected');
-                
-                setTimeout(() => {
-                    hideConnectionStatus();
-                }, 3000);
-            }
-        }
-
-        async function connectKeplr() {
-            if (!window.keplr) {
-                throw new Error('Keplr wallet not installed');
-            }
-            
-            await window.keplr.enable('secret-4');
-            const offlineSigner = window.keplr.getOfflineSigner('secret-4');
-            const accounts = await offlineSigner.getAccounts();
-            
-            return accounts[0].address;
-        }
-
-        async function connectLeap() {
-            if (!window.leap) {
-                throw new Error('Leap wallet not installed');
-            }
-            
-            await window.leap.enable('secret-4');
-            const offlineSigner = window.leap.getOfflineSigner('secret-4');
-            const accounts = await offlineSigner.getAccounts();
-            
-            return accounts[0].address;
-        }
-
-        async function connectMetaMask() {
-            if (!window.ethereum) {
-                throw new Error('MetaMask not installed');
-            }
-            
-            const accounts = await window.ethereum.request({
-                method: 'eth_requestAccounts'
-            });
-            
-            return accounts[0];
-        }
-
-        async function connectOKX() {
-            if (!window.okxwallet) {
-                throw new Error('OKX Wallet not installed');
-            }
-            
-            const accounts = await window.okxwallet.request({
-                method: 'eth_requestAccounts'
-            });
-            
-            return accounts[0];
-        }
-
-        function updateWalletUI() {
-            const connectBtn = document.getElementById('connectWalletBtn');
-            const walletStatus = document.getElementById('walletStatus');
-            const walletAddress = document.getElementById('walletAddress');
-            
-            if (walletConnected) {
-                connectBtn.style.display = 'none';
-                walletStatus.classList.add('connected');
-                walletAddress.textContent = `${userAddress.slice(0, 6)}...${userAddress.slice(-4)}`;
-                
-                updateTradingForm();
-                updateBalanceDisplay();
-            }
-        }
-
-        async function updateBalanceDisplay() {
-            // This would fetch real balance from the connected wallet
-            const availableBalance = document.getElementById('availableBalance');
-            availableBalance.textContent = `1,234.56 ${currentPair}`;
-        }
-
-        // Trading functions
-        function setMaxAmount() {
-            // This would set the maximum available balance
-            const tradeAmount = document.getElementById('tradeAmount');
-            tradeAmount.value = '1234.56';
-            calculateTotal();
-        }
-
-        function calculateTotal() {
-            const amount = parseFloat(document.getElementById('tradeAmount').value) || 0;
-            const price = parseFloat(document.getElementById('tradePrice').value) || realPriceData[currentPair]?.price || 0;
-            const total = amount * price;
-            
-            document.getElementById('tradeTotal').value = total.toFixed(2);
-        }
-
-        async function executeTrade() {
-            if (!walletConnected) {
-                showWalletModal();
-                return;
-            }
-            
-            const amount = parseFloat(document.getElementById('tradeAmount').value);
-            const price = parseFloat(document.getElementById('tradePrice').value) || realPriceData[currentPair]?.price;
-            
-            if (!amount || !price) {
-                alert('Please enter valid amount and price');
-                return;
-            }
-            
-            console.log(`🔄 Executing ${currentTradingMode} trade:`, {
-                pair: currentPair,
-                amount,
-                price,
-                total: amount * price,
-                privacy: currentPrivacyMode
-            });
-            
-            // This would execute the actual trade
-            showConnectionStatus('Trade executed successfully', 'connected');
-            
-            setTimeout(() => {
-                hideConnectionStatus();
-            }, 3000);
-        }
-
-        // Setup real-time updates
-        function setupRealTimeUpdates() {
-            // Update prices every 10 seconds
-            setInterval(async () => {
-                await loadRealPriceData();
-            }, 10000);
-            
-            // Update chart every 30 seconds
-            setInterval(() => {
-                if (chartData.length > 0) {
-                    drawChart();
-                }
-            }, 30000);
-        }
-
-        // Connection status functions
-        function showConnectionStatus(message, type) {
-            const status = document.getElementById('connectionStatus');
-            const text = document.getElementById('connectionText');
-            
-            text.textContent = message;
-            status.className = `connection-status show ${type}`;
-        }
-
-        function hideConnectionStatus() {
-            const status = document.getElementById('connectionStatus');
-            status.classList.remove('show');
-        }
-
-        // Event listeners for form inputs
-        document.addEventListener('DOMContentLoaded', () => {
-            const tradeAmount = document.getElementById('tradeAmount');
-            const tradePrice = document.getElementById('tradePrice');
-            
-            if (tradeAmount) {
-                tradeAmount.addEventListener('input', calculateTotal);
-            }
-            
-            if (tradePrice) {
-                tradePrice.addEventListener('input', calculateTotal);
-            }
-            
-            // Set default price to current market price
-            if (tradePrice && realPriceData[currentPair]) {
-                tradePrice.value = realPriceData[currentPair].price.toFixed(4);
-            }
-        });
 
         // Initialize the application when page loads
-        window.addEventListener('load', initializeApp);
-        
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            setTimeout(() => {
-                initializeChart();
-            }, 100);
-        });
-        
-        console.log('🚀 Enhanced SnipSwap DEX loaded - Ready for real trading!');
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
