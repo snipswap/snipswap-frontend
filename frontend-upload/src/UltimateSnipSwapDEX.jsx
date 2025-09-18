@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import SnipSwapLogo from './components/SnipSwapLogo';
+import RealTradingChart from './components/RealTradingChart';
 import './UltimateSnipSwap.css';
 
 const UltimateSnipSwapDEX = () => {
@@ -218,19 +220,7 @@ const UltimateSnipSwapDEX = () => {
       <header className="ultimate-header">
         <div className="header-left">
           <div className="logo-section">
-            <div className="snipswap-logo">
-              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                <rect width="40" height="40" rx="8" fill="url(#gradient)"/>
-                <path d="M12 20L20 12L28 20L20 28L12 20Z" fill="white" opacity="0.9"/>
-                <path d="M16 20L20 16L24 20L20 24L16 20Z" fill="white"/>
-                <defs>
-                  <linearGradient id="gradient" x1="0" y1="0" x2="40" y2="40">
-                    <stop stopColor="#f0b90b"/>
-                    <stop offset="1" stopColor="#ffd700"/>
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
+            <SnipSwapLogo size={40} />
             <div className="logo-text">
               <h1>SnipSwap</h1>
               <span>Privacy-First DEX</span>
@@ -409,72 +399,13 @@ const UltimateSnipSwapDEX = () => {
 
           {/* Advanced Chart Container */}
           <div className="advanced-chart-container" ref={chartRef}>
-            <div className="chart-price-display">
-              <div className="live-price">
-                ${currentPrice.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 4
-                })}
-              </div>
-              <div className={`live-change ${priceChange >= 0 ? 'positive' : 'negative'}`}>
-                {priceChange >= 0 ? '+' : ''}{priceChange.toFixed(2)}%
-              </div>
-            </div>
-
-            {/* Professional Chart Canvas */}
-            <div className="chart-canvas">
-              <div className="price-scale">
-                {[...Array(10)].map((_, i) => {
-                  const price = ohlcData.high - (ohlcData.high - ohlcData.low) * (i / 9);
-                  return (
-                    <div key={i} className="price-level">
-                      {price.toFixed(2)}
-                    </div>
-                  );
-                })}
-              </div>
-              
-              <div className="candlestick-chart">
-                {chartData.slice(-50).map((candle, index) => {
-                  const isGreen = candle.close > candle.open;
-                  const bodyHeight = Math.abs(candle.close - candle.open) / (ohlcData.high - ohlcData.low) * 300;
-                  const wickTop = (ohlcData.high - candle.high) / (ohlcData.high - ohlcData.low) * 300;
-                  const wickBottom = (candle.low - ohlcData.low) / (ohlcData.high - ohlcData.low) * 300;
-                  
-                  return (
-                    <div key={index} className="candle" style={{ left: `${index * 12}px` }}>
-                      <div 
-                        className={`candle-wick ${isGreen ? 'green' : 'red'}`}
-                        style={{
-                          top: `${wickTop}px`,
-                          height: `${300 - wickTop - wickBottom}px`
-                        }}
-                      />
-                      <div 
-                        className={`candle-body ${isGreen ? 'green' : 'red'}`}
-                        style={{
-                          top: `${(ohlcData.high - Math.max(candle.open, candle.close)) / (ohlcData.high - ohlcData.low) * 300}px`,
-                          height: `${Math.max(bodyHeight, 1)}px`
-                        }}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-              
-              <div className="volume-chart">
-                {chartData.slice(-50).map((candle, index) => (
-                  <div 
-                    key={index} 
-                    className="volume-bar"
-                    style={{
-                      left: `${index * 12}px`,
-                      height: `${(candle.volume / Math.max(...chartData.map(c => c.volume))) * 50}px`
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
+            <RealTradingChart 
+              chartData={chartData}
+              chartType={chartType}
+              timeframe={timeframe}
+              currentPrice={currentPrice}
+              priceChange={priceChange}
+            />
           </div>
 
           {/* Moving Averages Display */}
