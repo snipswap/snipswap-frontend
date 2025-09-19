@@ -17,6 +17,9 @@ const BinanceStyleChart = ({
   const [showMA25, setShowMA25] = useState(true);
   const [showMA99, setShowMA99] = useState(true);
   const [showVolume, setShowVolume] = useState(true);
+  const [showVWAP, setShowVWAP] = useState(true);
+  const [showRSI, setShowRSI] = useState(true);
+  const [showMACD, setShowMACD] = useState(true);
   const [crosshair, setCrosshair] = useState({ x: 0, y: 0, visible: false });
 
   // Generate realistic chart data if not provided
@@ -54,6 +57,95 @@ const BinanceStyleChart = ({
   const ma7 = calculateMA(7);
   const ma25 = calculateMA(25);
   const ma99 = calculateMA(99);
+
+  // Calculate VWAP (Volume Weighted Average Price)
+  const calculateVWAP = () => {
+    let cumulativeTPV = 0; // Typical Price * Volume
+    let cumulativeVolume = 0;
+    
+    return data.map((candle) => {
+      const typicalPrice = (candle.high + candle.low + candle.close) / 3;
+      cumulativeTPV += typicalPrice * candle.volume;
+      cumulativeVolume += candle.volume;
+      return cumulativeVolume > 0 ? cumulativeTPV / cumulativeVolume : typicalPrice;
+    });
+  };
+
+  // Calculate RSI (Relative Strength Index)
+  const calculateRSI = (period = 14) => {
+    const rsi = [];
+    const gains = [];
+    const losses = [];
+    
+    for (let i = 1; i < data.length; i++) {
+      const change = data[i].close - data[i - 1].close;
+      gains.push(change > 0 ? change : 0);
+      losses.push(change < 0 ? Math.abs(change) : 0);
+    }
+    
+    for (let i = 0; i < gains.length; i++) {
+      if (i < period - 1) {
+        rsi.push(null);
+      } else {
+        const avgGain = gains.slice(i - period + 1, i + 1).reduce((a, b) => a + b, 0) / period;
+        const avgLoss = losses.slice(i - period + 1, i + 1).reduce((a, b) => a + b, 0) / period;
+        const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+        rsi.push(100 - (100 / (1 + rs)));
+      }
+    }
+    
+    return [null, ...rsi]; // Add null for first data point
+  };
+
+  // Calculate MACD (Moving Average Convergence Divergence)
+  const calculateMACD = () => {
+    const ema12 = calculateEMA(12);
+    const ema26 = calculateEMA(26);
+    const macdLine = ema12.map((val, i) => val && ema26[i] ? val - ema26[i] : null);
+    const signalLine = calculateEMAFromArray(macdLine.filter(v => v !== null), 9);
+    const histogram = macdLine.map((val, i) => {
+      const signal = signalLine[i - macdLine.findIndex(v => v !== null)];
+      return val && signal ? val - signal : null;
+    });
+    
+    return { macdLine, signalLine: signalLine, histogram };
+  };
+
+  // Calculate EMA (Exponential Moving Average)
+  const calculateEMA = (period) => {
+    const ema = [];
+    const multiplier = 2 / (period + 1);
+    
+    data.forEach((candle, index) => {
+      if (index === 0) {
+        ema.push(candle.close);
+      } else {
+        ema.push((candle.close * multiplier) + (ema[index - 1] * (1 - multiplier)));
+      }
+    });
+    
+    return ema;
+  };
+
+  // Calculate EMA from array
+  const calculateEMAFromArray = (values, period) => {
+    const ema = [];
+    const multiplier = 2 / (period + 1);
+    
+    values.forEach((value, index) => {
+      if (index === 0) {
+        ema.push(value);
+      } else {
+        ema.push((value * multiplier) + (ema[index - 1] * (1 - multiplier)));
+      }
+    });
+    
+    return ema;
+  };
+
+  const vwap = calculateVWAP();
+  const rsi = calculateRSI();
+  const macd = calculateMACD();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -169,6 +261,7 @@ const BinanceStyleChart = ({
     if (showMA7) drawMA(ma7, '#f39c12', 1);
     if (showMA25) drawMA(ma25, '#e74c3c', 1);
     if (showMA99) drawMA(ma99, '#9b59b6', 2);
+    if (showVWAP) drawMA(vwap, '#00bcd4', 2); // VWAP in cyan
 
     // Draw candlesticks or line chart
     if (chartType === 'candlestick') {
@@ -356,6 +449,9 @@ const BinanceStyleChart = ({
         {showMA7 && <div style={{ color: '#f39c12' }}>MA(7): {ma7[ma7.length - 1]?.toFixed(2)}</div>}
         {showMA25 && <div style={{ color: '#e74c3c' }}>MA(25): {ma25[ma25.length - 1]?.toFixed(2)}</div>}
         {showMA99 && <div style={{ color: '#9b59b6' }}>MA(99): {ma99[ma99.length - 1]?.toFixed(2)}</div>}
+        {showVWAP && <div style={{ color: '#00bcd4' }}>VWAP: {vwap[vwap.length - 1]?.toFixed(4)}</div>}
+        {showRSI && <div style={{ color: '#ff9800' }}>RSI(14): {rsi[rsi.length - 1]?.toFixed(1)}</div>}
+        {showMACD && <div style={{ color: '#4caf50' }}>MACD: {macd.macdLine[macd.macdLine.length - 1]?.toFixed(4)}</div>}
       </div>
 
       {/* Indicators Panel */}
@@ -393,6 +489,33 @@ const BinanceStyleChart = ({
             style={{ marginRight: '5px' }}
           />
           MA(99)
+        </label>
+        <label style={{ marginRight: '10px' }}>
+          <input 
+            type="checkbox" 
+            checked={showVWAP} 
+            onChange={(e) => setShowVWAP(e.target.checked)}
+            style={{ marginRight: '5px' }}
+          />
+          VWAP
+        </label>
+        <label style={{ marginRight: '10px' }}>
+          <input 
+            type="checkbox" 
+            checked={showRSI} 
+            onChange={(e) => setShowRSI(e.target.checked)}
+            style={{ marginRight: '5px' }}
+          />
+          RSI
+        </label>
+        <label style={{ marginRight: '10px' }}>
+          <input 
+            type="checkbox" 
+            checked={showMACD} 
+            onChange={(e) => setShowMACD(e.target.checked)}
+            style={{ marginRight: '5px' }}
+          />
+          MACD
         </label>
         <label>
           <input 
