@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import RealDataChart from './components/RealDataChart';
+import BinanceStyleChart from './BinanceStyleChart';
 import './Perfect.css';
 
 const EnhancedSnipSwapDEX_Perfect = () => {
@@ -321,10 +321,14 @@ const EnhancedSnipSwapDEX_Perfect = () => {
 
         {/* Chart Container */}
         <div className="chart-container-main">
-          <RealDataChart 
-            symbol={selectedPair}
-            timeframe={timeframe}
+          <BinanceStyleChart 
+            chartData={[]}
             chartType={chartType}
+            timeframe={timeframe}
+            currentPrice={4.63}
+            priceChange={2.25}
+            ohlcData={{ open: 4.6254, high: 4.8615, low: 4.3985, close: 4.6300 }}
+            volume24h={99800000}
           />
         </div>
       </main>
