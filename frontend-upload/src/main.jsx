@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import EnhancedSnipSwapDEX_Perfect from './EnhancedSnipSwapDEX_Perfect.jsx'
+import CleanSnipSwapDEX from './CleanSnipSwapDEX.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <EnhancedSnipSwapDEX_Perfect />
+    <CleanSnipSwapDEX />
   </React.StrictMode>,
 )
 

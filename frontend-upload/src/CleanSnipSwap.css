@@ -1,0 +1,336 @@
+/* Clean SnipSwap DEX Styles - Matching Screenshots */
+
+.clean-dex {
+  background: #1a1a1a;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.clean-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #f0b90b;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+/* Price Section */
+.price-section {
+  padding: 16px;
+  background: #1a1a1a;
+}
+
+.pair-selector select {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: white;
+  padding: 8px 12px;
+  font-size: 16px;
+  margin-bottom: 16px;
+  width: 150px;
+}
+
+.price-display {
+  margin-bottom: 20px;
+}
+
+.main-price {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ef5350;
+  line-height: 1;
+}
+
+.price-usd {
+  font-size: 16px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #888;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+}
+
+.stat-value.positive {
+  color: #26a69a;
+}
+
+/* Chart Tabs */
+.chart-tabs {
+  display: flex;
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+.chart-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #888;
+  padding: 16px;
+  font-size: 16px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.chart-tab.active {
+  color: white;
+  border-bottom-color: #f0b90b;
+}
+
+/* Chart Controls */
+.chart-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+}
+
+.timeframe-control select {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.indicator-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.indicator-controls select {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.indicator-toggle {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.depth-label {
+  font-size: 14px;
+  color: #888;
+}
+
+/* Chart Area */
+.chart-area {
+  flex: 1;
+  background: #1a1a1a;
+  position: relative;
+  min-height: 300px;
+}
+
+.indicator-label {
+  position: absolute;
+  top: 10px;
+  left: 16px;
+  font-size: 12px;
+  color: #888;
+  z-index: 10;
+}
+
+.macd-indicator {
+  border-top: 1px solid #333;
+  background: #1a1a1a;
+}
+
+/* Bottom Tabs */
+.bottom-tabs {
+  display: flex;
+  background: #1a1a1a;
+  border-top: 1px solid #333;
+  overflow-x: auto;
+}
+
+.bottom-tab {
+  background: none;
+  border: none;
+  color: #888;
+  padding: 16px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.bottom-tab.active {
+  color: white;
+  border-bottom-color: #f0b90b;
+}
+
+/* Trading Buttons */
+.trading-buttons {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  background: #1a1a1a;
+}
+
+.buy-btn, .sell-btn {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.buy-btn {
+  background: #26a69a;
+  color: white;
+}
+
+.buy-btn:hover {
+  background: #2bbbad;
+}
+
+.sell-btn {
+  background: #ef5350;
+  color: white;
+}
+
+.sell-btn:hover {
+  background: #f44336;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .chart-controls {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .indicator-controls {
+    flex-wrap: wrap;
+  }
+  
+  .bottom-tabs {
+    font-size: 12px;
+  }
+  
+  .bottom-tab {
+    padding: 12px 8px;
+  }
+}
+
+/* Canvas Styling */
+canvas {
+  display: block;
+  background: #1a1a1a;
+}
+
+/* Select Styling */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+select:focus {
+  outline: none;
+  border-color: #f0b90b;
+}
+
+/* Button Hover Effects */
+button:hover {
+  opacity: 0.9;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2a2a2a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
