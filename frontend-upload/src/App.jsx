@@ -7,6 +7,7 @@ const SnipSwapDEX = () => {
   const [prices, setPrices] = useState({});
   const [selectedSymbol, setSelectedSymbol] = useState('ATOM');
   const [loading, setLoading] = useState(true);
+  const [chartLoading, setChartLoading] = useState(false);
   
   // Chart and indicators
   const [chartData, setChartData] = useState([]);
@@ -46,6 +47,7 @@ const SnipSwapDEX = () => {
         setLoading(false);
       } catch (error) {
         console.error('Error fetching prices:', error);
+        setLoading(false);
       }
     };
 
@@ -54,15 +56,20 @@ const SnipSwapDEX = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch historical data when symbol changes
+  // Fetch historical data when symbol or timeframe changes
   useEffect(() => {
     const fetchHistoricalData = async () => {
+      setChartLoading(true);
       try {
-        const days = timeframe === '1D' ? 1 : timeframe === '1W' ? 7 : 1;
+        const days = timeframe === '1W' ? 7 : 1;
         const data = await priceService.fetchHistoricalData(selectedSymbol, days);
-        setChartData(data);
+        if (data && data.length > 0) {
+          setChartData(data);
+        }
       } catch (error) {
         console.error('Error fetching historical data:', error);
+      } finally {
+        setChartLoading(false);
       }
     };
 
@@ -71,99 +78,110 @@ const SnipSwapDEX = () => {
     }
   }, [selectedSymbol, timeframe]);
 
-  // Initialize chart
+  // Initialize and update chart
   useEffect(() => {
-    if (!chartContainerRef.current || chartData.length === 0) return;
+    if (!chartContainerRef.current) return;
 
-    // Clear existing chart
-    if (chartRef.current) {
-      chartRef.current.remove();
-      chartRef.current = null;
-    }
-
-    // Create new chart
-    const chart = createChart(chartContainerRef.current, {
-      width: chartContainerRef.current.clientWidth,
-      height: 400,
-      layout: {
-        background: { color: '#1E2329' },
-        textColor: '#848E9C',
-      },
-      grid: {
-        vertLines: { color: '#2B3139' },
-        horzLines: { color: '#2B3139' },
-      },
-      crosshair: {
-        mode: 1,
-      },
-      rightPriceScale: {
-        borderColor: '#2B3139',
-      },
-      timeScale: {
-        borderColor: '#2B3139',
-        timeVisible: true,
-        secondsVisible: false,
-      },
-    });
-
-    chartRef.current = chart;
-
-    // Add candlestick series
-    const candlestickSeries = chart.addCandlestickSeries({
-      upColor: '#0ECB81',
-      downColor: '#F6465D',
-      borderUpColor: '#0ECB81',
-      borderDownColor: '#F6465D',
-      wickUpColor: '#0ECB81',
-      wickDownColor: '#F6465D',
-    });
-
-    candlestickSeriesRef.current = candlestickSeries;
-
-    // Convert data to lightweight-charts format
-    const formattedData = chartData.map(candle => ({
-      time: Math.floor(candle.timestamp / 1000),
-      open: candle.open,
-      high: candle.high,
-      low: candle.low,
-      close: candle.close,
-    }));
-
-    candlestickSeries.setData(formattedData);
-
-    // Add current price line
-    const currentPrice = prices[selectedSymbol];
-    if (currentPrice) {
-      candlestickSeries.createPriceLine({
-        price: currentPrice.price,
-        color: '#F0B90B',
-        lineWidth: 2,
-        lineStyle: 2, // Dashed
-        axisLabelVisible: true,
-        title: 'Current',
+    // Create chart only once
+    if (!chartRef.current) {
+      const chart = createChart(chartContainerRef.current, {
+        width: chartContainerRef.current.clientWidth,
+        height: 400,
+        layout: {
+          background: { color: '#1E2329' },
+          textColor: '#848E9C',
+        },
+        grid: {
+          vertLines: { color: '#2B3139' },
+          horzLines: { color: '#2B3139' },
+        },
+        crosshair: {
+          mode: 1,
+        },
+        rightPriceScale: {
+          borderColor: '#2B3139',
+        },
+        timeScale: {
+          borderColor: '#2B3139',
+          timeVisible: true,
+          secondsVisible: false,
+        },
       });
+
+      chartRef.current = chart;
+
+      // Add candlestick series
+      const candlestickSeries = chart.addCandlestickSeries({
+        upColor: '#0ECB81',
+        downColor: '#F6465D',
+        borderUpColor: '#0ECB81',
+        borderDownColor: '#F6465D',
+        wickUpColor: '#0ECB81',
+        wickDownColor: '#F6465D',
+      });
+
+      candlestickSeriesRef.current = candlestickSeries;
+
+      // Handle resize
+      const handleResize = () => {
+        if (chartContainerRef.current && chartRef.current) {
+          chartRef.current.applyOptions({
+            width: chartContainerRef.current.clientWidth,
+          });
+        }
+      };
+
+      window.addEventListener('resize', handleResize);
+
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        if (chartRef.current) {
+          chartRef.current.remove();
+          chartRef.current = null;
+        }
+      };
     }
+  }, []);
 
-    // Fit content
-    chart.timeScale().fitContent();
+  // Update chart data when chartData changes
+  useEffect(() => {
+    if (!candlestickSeriesRef.current || chartData.length === 0) return;
 
-    // Handle resize
-    const handleResize = () => {
-      if (chartContainerRef.current && chartRef.current) {
-        chartRef.current.applyOptions({
-          width: chartContainerRef.current.clientWidth,
+    try {
+      // Convert data to lightweight-charts format
+      const formattedData = chartData.map(candle => ({
+        time: Math.floor(candle.timestamp / 1000),
+        open: candle.open,
+        high: candle.high,
+        low: candle.low,
+        close: candle.close,
+      }));
+
+      // Update the series data
+      candlestickSeriesRef.current.setData(formattedData);
+
+      // Add current price line
+      const currentPrice = prices[selectedSymbol];
+      if (currentPrice && chartRef.current) {
+        // Remove old price lines by recreating the series
+        // (lightweight-charts doesn't have a direct way to remove price lines)
+        candlestickSeriesRef.current.createPriceLine({
+          price: currentPrice.price,
+          color: '#F0B90B',
+          lineWidth: 2,
+          lineStyle: 2, // Dashed
+          axisLabelVisible: true,
+          title: 'Current',
         });
       }
-    };
 
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
+      // Fit content
       if (chartRef.current) {
-        chartRef.current.remove();
+        chartRef.current.timeScale().fitContent();
       }
-    };
+    } catch (error) {
+      console.error('Error updating chart:', error);
+    }
   }, [chartData, prices, selectedSymbol]);
 
   // Update indicators
@@ -173,45 +191,61 @@ const SnipSwapDEX = () => {
     // Clear existing indicator series
     Object.values(maSeriesRefs.current).forEach(series => {
       if (series) {
-        chartRef.current.removeSeries(series);
+        try {
+          chartRef.current.removeSeries(series);
+        } catch (e) {
+          // Series might already be removed
+        }
       }
     });
     maSeriesRefs.current = {};
 
     // Add MA7
     if (activeIndicators.MA7 && chartData.length >= 7) {
-      const ma7Series = chartRef.current.addLineSeries({
-        color: '#F7931A',
-        lineWidth: 2,
-        title: 'MA7',
-      });
-      const ma7Data = calculateMA(chartData, 7);
-      ma7Series.setData(ma7Data);
-      maSeriesRefs.current.MA7 = ma7Series;
+      try {
+        const ma7Series = chartRef.current.addLineSeries({
+          color: '#F7931A',
+          lineWidth: 2,
+          title: 'MA7',
+        });
+        const ma7Data = calculateMA(chartData, 7);
+        ma7Series.setData(ma7Data);
+        maSeriesRefs.current.MA7 = ma7Series;
+      } catch (error) {
+        console.error('Error adding MA7:', error);
+      }
     }
 
     // Add MA25
     if (activeIndicators.MA25 && chartData.length >= 25) {
-      const ma25Series = chartRef.current.addLineSeries({
-        color: '#E91E63',
-        lineWidth: 2,
-        title: 'MA25',
-      });
-      const ma25Data = calculateMA(chartData, 25);
-      ma25Series.setData(ma25Data);
-      maSeriesRefs.current.MA25 = ma25Series;
+      try {
+        const ma25Series = chartRef.current.addLineSeries({
+          color: '#E91E63',
+          lineWidth: 2,
+          title: 'MA25',
+        });
+        const ma25Data = calculateMA(chartData, 25);
+        ma25Series.setData(ma25Data);
+        maSeriesRefs.current.MA25 = ma25Series;
+      } catch (error) {
+        console.error('Error adding MA25:', error);
+      }
     }
 
     // Add MA99
     if (activeIndicators.MA99 && chartData.length >= 99) {
-      const ma99Series = chartRef.current.addLineSeries({
-        color: '#9C27B0',
-        lineWidth: 2,
-        title: 'MA99',
-      });
-      const ma99Data = calculateMA(chartData, 99);
-      ma99Series.setData(ma99Data);
-      maSeriesRefs.current.MA99 = ma99Series;
+      try {
+        const ma99Series = chartRef.current.addLineSeries({
+          color: '#9C27B0',
+          lineWidth: 2,
+          title: 'MA99',
+        });
+        const ma99Data = calculateMA(chartData, 99);
+        ma99Series.setData(ma99Data);
+        maSeriesRefs.current.MA99 = ma99Series;
+      } catch (error) {
+        console.error('Error adding MA99:', error);
+      }
     }
   }, [activeIndicators, chartData]);
 
@@ -444,6 +478,7 @@ const SnipSwapDEX = () => {
                   <button
                     key={tf}
                     onClick={() => setTimeframe(tf)}
+                    disabled={chartLoading}
                     style={{
                       padding: '4px 12px',
                       borderRadius: '4px',
@@ -451,7 +486,8 @@ const SnipSwapDEX = () => {
                       backgroundColor: timeframe === tf ? '#F0B90B' : '#2B3139',
                       color: timeframe === tf ? 'black' : '#848E9C',
                       border: 'none',
-                      cursor: 'pointer',
+                      cursor: chartLoading ? 'not-allowed' : 'pointer',
+                      opacity: chartLoading ? 0.6 : 1,
                       transition: 'all 0.2s'
                     }}
                   >
@@ -497,7 +533,24 @@ const SnipSwapDEX = () => {
             </div>
 
             {/* Chart Container */}
-            <div style={{ backgroundColor: '#1E2329', borderRadius: '8px', padding: '16px' }}>
+            <div style={{ backgroundColor: '#1E2329', borderRadius: '8px', padding: '16px', position: 'relative' }}>
+              {chartLoading && (
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 10,
+                  backgroundColor: 'rgba(30, 35, 41, 0.9)',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  color: '#F0B90B',
+                  fontSize: '14px',
+                  fontWeight: '600'
+                }}>
+                  Loading chart data...
+                </div>
+              )}
               {loading ? (
                 <div style={{ height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ color: '#848E9C' }}>Loading chart data...</span>
