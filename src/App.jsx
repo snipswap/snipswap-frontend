@@ -1,8 +1,8 @@
 import React from 'react';
-import BinanceCarbonCopy from './BinanceCarbonCopy';
+import FinalSnipSwapDEX from './FinalSnipSwapDEX';
 
 function App() {
-  return <BinanceCarbonCopy />;
+  return <FinalSnipSwapDEX />;
 }
 
 export default App;
