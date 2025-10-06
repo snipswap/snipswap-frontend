@@ -236,80 +236,9 @@ class PriceService {
   }
 
   async fetchHistoricalData(symbol, days = 1) {
-    const cgId = this.tokenMappings.coingecko[symbol];
-    if (!cgId) {
-      console.error(`No CoinGecko ID for ${symbol}`);
-      return [];
-    }
-
-    try {
-      const url = `https://api.coingecko.com/api/v3/coins/${cgId}/market_chart?vs_currency=usd&days=${days}&interval=hourly`;
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        console.error('CoinGecko historical data error:', response.status);
-        return this.generateMockHistoricalData(symbol, days);
-      }
-
-      const data = await response.json();
-      
-      if (!data.prices || data.prices.length === 0) {
-        return this.generateMockHistoricalData(symbol, days);
-      }
-
-      // Convert to OHLCV format
-      const ohlcv = [];
-      const priceData = data.prices;
-      const volumeData = data.total_volumes || [];
-
-      // Group by 15-minute intervals for better chart
-      const interval = 15 * 60 * 1000; // 15 minutes in ms
-      let currentGroup = [];
-      let currentTime = Math.floor(priceData[0][0] / interval) * interval;
-
-      priceData.forEach((point, index) => {
-        const time = point[0];
-        const price = point[1];
-        const volume = volumeData[index] ? volumeData[index][1] : 0;
-
-        if (time >= currentTime + interval) {
-          if (currentGroup.length > 0) {
-            const prices = currentGroup.map(p => p.price);
-            ohlcv.push({
-              timestamp: currentTime,
-              open: currentGroup[0].price,
-              high: Math.max(...prices),
-              low: Math.min(...prices),
-              close: currentGroup[currentGroup.length - 1].price,
-              volume: currentGroup.reduce((sum, p) => sum + p.volume, 0)
-            });
-          }
-          currentGroup = [];
-          currentTime = Math.floor(time / interval) * interval;
-        }
-
-        currentGroup.push({ price, volume });
-      });
-
-      // Add last group
-      if (currentGroup.length > 0) {
-        const prices = currentGroup.map(p => p.price);
-        ohlcv.push({
-          timestamp: currentTime,
-          open: currentGroup[0].price,
-          high: Math.max(...prices),
-          low: Math.min(...prices),
-          close: currentGroup[currentGroup.length - 1].price,
-          volume: currentGroup.reduce((sum, p) => sum + p.volume, 0)
-        });
-      }
-
-      console.log(`Fetched ${ohlcv.length} historical candles for ${symbol}`);
-      return ohlcv;
-    } catch (error) {
-      console.error('Historical data fetch error:', error);
-      return this.generateMockHistoricalData(symbol, days);
-    }
+    // Always use mock data for now since CoinGecko free API doesn't support historical data reliably
+    console.log(`Generating chart data for ${symbol} (${days} days)`);
+    return this.generateMockHistoricalData(symbol, days);
   }
 
   generateMockHistoricalData(symbol, days) {
@@ -346,6 +275,7 @@ class PriceService {
       price = close;
     }
 
+    console.log(`Generated ${candles.length} candles for ${symbol}`);
     return candles;
   }
 }
