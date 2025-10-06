@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createChart } from 'lightweight-charts';
 import priceService from './services/priceService';
 
 const SnipSwapDEX = () => {
@@ -24,8 +25,11 @@ const SnipSwapDEX = () => {
   // Privacy features
   const [privateMode, setPrivateMode] = useState(false);
   
-  // Chart canvas ref
-  const chartCanvasRef = useRef(null);
+  // Chart refs
+  const chartContainerRef = useRef(null);
+  const chartRef = useRef(null);
+  const candlestickSeriesRef = useRef(null);
+  const maSeriesRefs = useRef({});
   
   // Available trading pairs
   const tradingPairs = [
@@ -45,12 +49,8 @@ const SnipSwapDEX = () => {
       }
     };
 
-    // Initial fetch
     fetchPrices();
-
-    // Update every 30 seconds
     const interval = setInterval(fetchPrices, 30000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -71,6 +71,163 @@ const SnipSwapDEX = () => {
     }
   }, [selectedSymbol, timeframe]);
 
+  // Initialize chart
+  useEffect(() => {
+    if (!chartContainerRef.current || chartData.length === 0) return;
+
+    // Clear existing chart
+    if (chartRef.current) {
+      chartRef.current.remove();
+      chartRef.current = null;
+    }
+
+    // Create new chart
+    const chart = createChart(chartContainerRef.current, {
+      width: chartContainerRef.current.clientWidth,
+      height: 400,
+      layout: {
+        background: { color: '#1E2329' },
+        textColor: '#848E9C',
+      },
+      grid: {
+        vertLines: { color: '#2B3139' },
+        horzLines: { color: '#2B3139' },
+      },
+      crosshair: {
+        mode: 1,
+      },
+      rightPriceScale: {
+        borderColor: '#2B3139',
+      },
+      timeScale: {
+        borderColor: '#2B3139',
+        timeVisible: true,
+        secondsVisible: false,
+      },
+    });
+
+    chartRef.current = chart;
+
+    // Add candlestick series
+    const candlestickSeries = chart.addCandlestickSeries({
+      upColor: '#0ECB81',
+      downColor: '#F6465D',
+      borderUpColor: '#0ECB81',
+      borderDownColor: '#F6465D',
+      wickUpColor: '#0ECB81',
+      wickDownColor: '#F6465D',
+    });
+
+    candlestickSeriesRef.current = candlestickSeries;
+
+    // Convert data to lightweight-charts format
+    const formattedData = chartData.map(candle => ({
+      time: Math.floor(candle.timestamp / 1000),
+      open: candle.open,
+      high: candle.high,
+      low: candle.low,
+      close: candle.close,
+    }));
+
+    candlestickSeries.setData(formattedData);
+
+    // Add current price line
+    const currentPrice = prices[selectedSymbol];
+    if (currentPrice) {
+      candlestickSeries.createPriceLine({
+        price: currentPrice.price,
+        color: '#F0B90B',
+        lineWidth: 2,
+        lineStyle: 2, // Dashed
+        axisLabelVisible: true,
+        title: 'Current',
+      });
+    }
+
+    // Fit content
+    chart.timeScale().fitContent();
+
+    // Handle resize
+    const handleResize = () => {
+      if (chartContainerRef.current && chartRef.current) {
+        chartRef.current.applyOptions({
+          width: chartContainerRef.current.clientWidth,
+        });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (chartRef.current) {
+        chartRef.current.remove();
+      }
+    };
+  }, [chartData, prices, selectedSymbol]);
+
+  // Update indicators
+  useEffect(() => {
+    if (!chartRef.current || !candlestickSeriesRef.current || chartData.length === 0) return;
+
+    // Clear existing indicator series
+    Object.values(maSeriesRefs.current).forEach(series => {
+      if (series) {
+        chartRef.current.removeSeries(series);
+      }
+    });
+    maSeriesRefs.current = {};
+
+    // Add MA7
+    if (activeIndicators.MA7 && chartData.length >= 7) {
+      const ma7Series = chartRef.current.addLineSeries({
+        color: '#F7931A',
+        lineWidth: 2,
+        title: 'MA7',
+      });
+      const ma7Data = calculateMA(chartData, 7);
+      ma7Series.setData(ma7Data);
+      maSeriesRefs.current.MA7 = ma7Series;
+    }
+
+    // Add MA25
+    if (activeIndicators.MA25 && chartData.length >= 25) {
+      const ma25Series = chartRef.current.addLineSeries({
+        color: '#E91E63',
+        lineWidth: 2,
+        title: 'MA25',
+      });
+      const ma25Data = calculateMA(chartData, 25);
+      ma25Series.setData(ma25Data);
+      maSeriesRefs.current.MA25 = ma25Series;
+    }
+
+    // Add MA99
+    if (activeIndicators.MA99 && chartData.length >= 99) {
+      const ma99Series = chartRef.current.addLineSeries({
+        color: '#9C27B0',
+        lineWidth: 2,
+        title: 'MA99',
+      });
+      const ma99Data = calculateMA(chartData, 99);
+      ma99Series.setData(ma99Data);
+      maSeriesRefs.current.MA99 = ma99Series;
+    }
+  }, [activeIndicators, chartData]);
+
+  // Calculate moving average
+  const calculateMA = (data, period) => {
+    const ma = [];
+    for (let i = period - 1; i < data.length; i++) {
+      const sum = data.slice(i - period + 1, i + 1).reduce((acc, candle) => acc + candle.close, 0);
+      ma.push({
+        time: Math.floor(data[i].timestamp / 1000),
+        value: sum / period,
+      });
+    }
+    return ma;
+  };
+
   // Handle symbol change
   const handleSymbolChange = (symbol) => {
     setSelectedSymbol(symbol);
@@ -83,159 +240,6 @@ const SnipSwapDEX = () => {
       [indicator]: !prev[indicator]
     }));
   };
-
-  // Calculate moving average
-  const calculateMA = (data, period) => {
-    const ma = [];
-    for (let i = period - 1; i < data.length; i++) {
-      const sum = data.slice(i - period + 1, i + 1).reduce((acc, candle) => acc + candle.close, 0);
-      ma.push({ index: i, value: sum / period });
-    }
-    return ma;
-  };
-
-  // Draw chart
-  useEffect(() => {
-    const canvas = chartCanvasRef.current;
-    if (!canvas || chartData.length === 0) return;
-
-    const ctx = canvas.getContext('2d');
-    const { width, height } = canvas;
-    
-    // Clear canvas
-    ctx.clearRect(0, 0, width, height);
-    
-    // Set up chart parameters
-    const padding = 40;
-    const chartWidth = width - 2 * padding;
-    const chartHeight = height - 2 * padding;
-    
-    // Calculate price range
-    const allPrices = chartData.map(d => [d.high, d.low]).flat();
-    const minPrice = Math.min(...allPrices);
-    const maxPrice = Math.max(...allPrices);
-    const priceRange = maxPrice - minPrice || 1;
-    
-    // Draw background
-    ctx.fillStyle = '#1E2329';
-    ctx.fillRect(0, 0, width, height);
-    
-    // Draw grid
-    ctx.strokeStyle = '#2B3139';
-    ctx.lineWidth = 1;
-    
-    // Horizontal grid lines
-    for (let i = 0; i <= 5; i++) {
-      const y = padding + (chartHeight * i) / 5;
-      ctx.beginPath();
-      ctx.moveTo(padding, y);
-      ctx.lineTo(width - padding, y);
-      ctx.stroke();
-      
-      // Price labels
-      const price = maxPrice - (priceRange * i) / 5;
-      ctx.fillStyle = '#848E9C';
-      ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto';
-      ctx.textAlign = 'right';
-      ctx.fillText(price.toFixed(4), width - padding - 5, y + 4);
-    }
-    
-    // Vertical grid lines
-    const timeStep = Math.max(1, Math.floor(chartData.length / 8));
-    for (let i = 0; i < chartData.length; i += timeStep) {
-      const x = padding + (chartWidth * i) / (chartData.length - 1);
-      ctx.beginPath();
-      ctx.moveTo(x, padding);
-      ctx.lineTo(x, height - padding);
-      ctx.stroke();
-    }
-    
-    // Draw candlesticks
-    const candleWidth = Math.max(2, chartWidth / chartData.length - 2);
-    
-    chartData.forEach((candle, index) => {
-      const x = padding + (chartWidth * index) / (chartData.length - 1);
-      const openY = padding + ((maxPrice - candle.open) / priceRange) * chartHeight;
-      const closeY = padding + ((maxPrice - candle.close) / priceRange) * chartHeight;
-      const highY = padding + ((maxPrice - candle.high) / priceRange) * chartHeight;
-      const lowY = padding + ((maxPrice - candle.low) / priceRange) * chartHeight;
-      
-      const isGreen = candle.close >= candle.open;
-      ctx.fillStyle = isGreen ? '#0ECB81' : '#F6465D';
-      ctx.strokeStyle = isGreen ? '#0ECB81' : '#F6465D';
-      
-      // Draw wick
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(x, highY);
-      ctx.lineTo(x, lowY);
-      ctx.stroke();
-      
-      // Draw body
-      const bodyTop = Math.min(openY, closeY);
-      const bodyHeight = Math.abs(closeY - openY) || 1;
-      ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
-    });
-    
-    // Draw current price line
-    const currentPrice = prices[selectedSymbol];
-    if (currentPrice) {
-      const currentPriceY = padding + ((maxPrice - currentPrice.price) / priceRange) * chartHeight;
-      
-      // Dotted line
-      ctx.strokeStyle = '#F0B90B';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([5, 5]);
-      ctx.beginPath();
-      ctx.moveTo(padding, currentPriceY);
-      ctx.lineTo(width - padding, currentPriceY);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      
-      // Price label
-      ctx.fillStyle = '#F0B90B';
-      ctx.fillRect(width - padding - 80, currentPriceY - 10, 75, 20);
-      ctx.fillStyle = '#000';
-      ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto';
-      ctx.textAlign = 'center';
-      ctx.fillText(currentPrice.price.toFixed(4), width - padding - 42.5, currentPriceY + 4);
-    }
-    
-    // Draw indicators
-    if (activeIndicators.MA7 && chartData.length >= 7) {
-      drawMovingAverage(ctx, 7, '#F7931A');
-    }
-    if (activeIndicators.MA25 && chartData.length >= 25) {
-      drawMovingAverage(ctx, 25, '#E91E63');
-    }
-    if (activeIndicators.MA99 && chartData.length >= 99) {
-      drawMovingAverage(ctx, 99, '#9C27B0');
-    }
-    
-    function drawMovingAverage(ctx, period, color) {
-      if (chartData.length < period) return;
-      
-      const ma = calculateMA(chartData, period);
-      
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      
-      ma.forEach((point, idx) => {
-        const x = padding + (chartWidth * point.index) / (chartData.length - 1);
-        const y = padding + ((maxPrice - point.value) / priceRange) * chartHeight;
-        
-        if (idx === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
-      });
-      
-      ctx.stroke();
-    }
-    
-  }, [chartData, activeIndicators, prices, selectedSymbol]);
 
   // Format number
   const formatNumber = (num, decimals = 4) => {
@@ -320,7 +324,7 @@ const SnipSwapDEX = () => {
       {/* Main Content */}
       <div style={{ display: 'flex' }}>
         {/* Left Sidebar - Trading Pairs */}
-        <div style={{ width: '256px', backgroundColor: '#1E2329', borderRight: '1px solid #2B3139', padding: '16px' }}>
+        <div style={{ width: '256px', backgroundColor: '#1E2329', borderRight: '1px solid #2B3139', padding: '16px', height: 'calc(100vh - 100px)', overflowY: 'auto' }}>
           <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#848E9C', marginBottom: '16px' }}>Available Trading Pairs</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {tradingPairs.map(symbol => {
@@ -492,19 +496,14 @@ const SnipSwapDEX = () => {
               </div>
             </div>
 
-            {/* Chart Canvas */}
+            {/* Chart Container */}
             <div style={{ backgroundColor: '#1E2329', borderRadius: '8px', padding: '16px' }}>
               {loading ? (
-                <div style={{ height: '384px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ color: '#848E9C' }}>Loading chart data...</span>
                 </div>
               ) : (
-                <canvas
-                  ref={chartCanvasRef}
-                  width={1000}
-                  height={400}
-                  style={{ width: '100%', height: '400px' }}
-                />
+                <div ref={chartContainerRef} style={{ width: '100%', height: '400px' }} />
               )}
             </div>
           </div>
@@ -670,7 +669,7 @@ const SnipSwapDEX = () => {
             <span>Loaded Prices: {Object.keys(prices).length}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span>Powered by CoinGecko & DeFiLlama</span>
+            <span>Powered by TradingView • CoinGecko • DeFiLlama</span>
             <span>© 2025 SnipSwap</span>
           </div>
         </div>
