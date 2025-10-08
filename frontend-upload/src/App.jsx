@@ -145,9 +145,19 @@ const SnipSwapDEX = () => {
 
   // Update chart data when chartData changes
   useEffect(() => {
-    if (!candlestickSeriesRef.current || chartData.length === 0) return;
+    if (!candlestickSeriesRef.current) {
+      console.log('No candlestick series ref');
+      return;
+    }
+    
+    if (chartData.length === 0) {
+      console.log('No chart data available');
+      return;
+    }
 
     try {
+      console.log(`Updating chart with ${chartData.length} candles for ${selectedSymbol}`);
+      
       // Convert data to lightweight-charts format
       const formattedData = chartData.map(candle => ({
         time: Math.floor(candle.timestamp / 1000),
@@ -159,12 +169,11 @@ const SnipSwapDEX = () => {
 
       // Update the series data
       candlestickSeriesRef.current.setData(formattedData);
+      console.log('Chart data updated successfully');
 
       // Add current price line
       const currentPrice = prices[selectedSymbol];
       if (currentPrice && chartRef.current) {
-        // Remove old price lines by recreating the series
-        // (lightweight-charts doesn't have a direct way to remove price lines)
         candlestickSeriesRef.current.createPriceLine({
           price: currentPrice.price,
           color: '#F0B90B',
@@ -275,10 +284,21 @@ const SnipSwapDEX = () => {
     }));
   };
 
-  // Format number
-  const formatNumber = (num, decimals = 4) => {
+  // Format number with dynamic decimal places based on value
+  const formatNumber = (num, decimals = null) => {
     if (!num) return '0';
-    return parseFloat(num).toFixed(decimals);
+    const value = parseFloat(num);
+    
+    // Auto-determine decimals if not specified
+    if (decimals === null) {
+      if (value >= 1000) return value.toFixed(2);
+      if (value >= 1) return value.toFixed(4);
+      if (value >= 0.01) return value.toFixed(4);
+      if (value >= 0.0001) return value.toFixed(6);
+      return value.toFixed(8); // For very small values like HUAHUA
+    }
+    
+    return value.toFixed(decimals);
   };
 
   // Format percentage
