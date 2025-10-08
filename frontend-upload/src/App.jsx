@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { createChart } from 'lightweight-charts';
+import React, { useState, useEffect } from 'react';
+import CandlestickChart from './components/CandlestickChart';
 import priceService from './services/priceService';
 
 const SnipSwapDEX = () => {
@@ -30,12 +30,6 @@ const SnipSwapDEX = () => {
   
   // Privacy features
   const [privateMode, setPrivateMode] = useState(false);
-  
-  // Chart refs
-  const chartContainerRef = useRef(null);
-  const chartRef = useRef(null);
-  const candlestickSeriesRef = useRef(null);
-  const maSeriesRefs = useRef({});
   
   // Available trading pairs
   const tradingPairs = [
@@ -93,199 +87,8 @@ const SnipSwapDEX = () => {
     }
   }, [selectedSymbol, timeframe]);
 
-  // Initialize and update chart
-  useEffect(() => {
-    if (!chartContainerRef.current) return;
-
-    // Create chart only once
-    if (!chartRef.current) {
-      const chart = createChart(chartContainerRef.current, {
-        width: chartContainerRef.current.clientWidth,
-        height: isMobile ? 300 : 400,
-        layout: {
-          background: { color: '#1E2329' },
-          textColor: '#848E9C',
-        },
-        grid: {
-          vertLines: { color: '#2B3139' },
-          horzLines: { color: '#2B3139' },
-        },
-        crosshair: {
-          mode: 1,
-        },
-        rightPriceScale: {
-          borderColor: '#2B3139',
-        },
-        timeScale: {
-          borderColor: '#2B3139',
-          timeVisible: true,
-          secondsVisible: false,
-        },
-      });
-
-      chartRef.current = chart;
-
-      // Add candlestick series
-      const candlestickSeries = chart.addCandlestickSeries({
-        upColor: '#0ECB81',
-        downColor: '#F6465D',
-        borderUpColor: '#0ECB81',
-        borderDownColor: '#F6465D',
-        wickUpColor: '#0ECB81',
-        wickDownColor: '#F6465D',
-      });
-
-      candlestickSeriesRef.current = candlestickSeries;
-
-      // Handle resize
-      const handleResize = () => {
-        if (chartContainerRef.current && chartRef.current) {
-          chartRef.current.applyOptions({
-            width: chartContainerRef.current.clientWidth,
-            height: window.innerWidth < 768 ? 300 : 400,
-          });
-        }
-      };
-
-      window.addEventListener('resize', handleResize);
-
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        if (chartRef.current) {
-          chartRef.current.remove();
-          chartRef.current = null;
-        }
-      };
-    }
-  }, [isMobile]);
-
-  // Update chart data when chartData changes
-  useEffect(() => {
-    if (!candlestickSeriesRef.current) {
-      console.log('No candlestick series ref');
-      return;
-    }
-    
-    if (chartData.length === 0) {
-      console.log('No chart data available');
-      return;
-    }
-
-    try {
-      console.log(`Updating chart with ${chartData.length} candles for ${selectedSymbol}`);
-      
-      // Convert data to lightweight-charts format
-      const formattedData = chartData.map(candle => ({
-        time: Math.floor(candle.timestamp / 1000),
-        open: candle.open,
-        high: candle.high,
-        low: candle.low,
-        close: candle.close,
-      }));
-
-      // Update the series data
-      candlestickSeriesRef.current.setData(formattedData);
-      console.log('Chart data updated successfully');
-
-      // Add current price line
-      const currentPrice = prices[selectedSymbol];
-      if (currentPrice && chartRef.current) {
-        candlestickSeriesRef.current.createPriceLine({
-          price: currentPrice.price,
-          color: '#F0B90B',
-          lineWidth: 2,
-          lineStyle: 2,
-          axisLabelVisible: true,
-          title: 'Current',
-        });
-      }
-
-      // Fit content
-      if (chartRef.current) {
-        chartRef.current.timeScale().fitContent();
-      }
-    } catch (error) {
-      console.error('Error updating chart:', error);
-    }
-  }, [chartData, prices, selectedSymbol]);
-
-  // Update indicators
-  useEffect(() => {
-    if (!chartRef.current || !candlestickSeriesRef.current || chartData.length === 0) return;
-
-    // Clear existing indicator series
-    Object.values(maSeriesRefs.current).forEach(series => {
-      if (series) {
-        try {
-          chartRef.current.removeSeries(series);
-        } catch (e) {
-          // Series might already be removed
-        }
-      }
-    });
-    maSeriesRefs.current = {};
-
-    // Add MA7
-    if (activeIndicators.MA7 && chartData.length >= 7) {
-      try {
-        const ma7Series = chartRef.current.addLineSeries({
-          color: '#F7931A',
-          lineWidth: 2,
-          title: 'MA7',
-        });
-        const ma7Data = calculateMA(chartData, 7);
-        ma7Series.setData(ma7Data);
-        maSeriesRefs.current.MA7 = ma7Series;
-      } catch (error) {
-        console.error('Error adding MA7:', error);
-      }
-    }
-
-    // Add MA25
-    if (activeIndicators.MA25 && chartData.length >= 25) {
-      try {
-        const ma25Series = chartRef.current.addLineSeries({
-          color: '#E91E63',
-          lineWidth: 2,
-          title: 'MA25',
-        });
-        const ma25Data = calculateMA(chartData, 25);
-        ma25Series.setData(ma25Data);
-        maSeriesRefs.current.MA25 = ma25Series;
-      } catch (error) {
-        console.error('Error adding MA25:', error);
-      }
-    }
-
-    // Add MA99
-    if (activeIndicators.MA99 && chartData.length >= 99) {
-      try {
-        const ma99Series = chartRef.current.addLineSeries({
-          color: '#9C27B0',
-          lineWidth: 2,
-          title: 'MA99',
-        });
-        const ma99Data = calculateMA(chartData, 99);
-        ma99Series.setData(ma99Data);
-        maSeriesRefs.current.MA99 = ma99Series;
-      } catch (error) {
-        console.error('Error adding MA99:', error);
-      }
-    }
-  }, [activeIndicators, chartData]);
-
-  // Calculate moving average
-  const calculateMA = (data, period) => {
-    const ma = [];
-    for (let i = period - 1; i < data.length; i++) {
-      const sum = data.slice(i - period + 1, i + 1).reduce((acc, candle) => acc + candle.close, 0);
-      ma.push({
-        time: Math.floor(data[i].timestamp / 1000),
-        value: sum / period,
-      });
-    }
-    return ma;
-  };
+  // Chart.js handles everything automatically via the component
+  // No manual chart initialization needed!
 
   // Handle symbol change
   const handleSymbolChange = (symbol) => {
@@ -842,12 +645,16 @@ const SnipSwapDEX = () => {
                   Loading chart data...
                 </div>
               )}
-              {loading ? (
+              {loading || chartData.length === 0 ? (
                 <div style={{ height: isMobile ? '300px' : '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ color: '#848E9C' }}>Loading chart data...</span>
                 </div>
               ) : (
-                <div ref={chartContainerRef} style={{ width: '100%', height: isMobile ? '300px' : '400px' }} />
+                <CandlestickChart 
+                  data={chartData} 
+                  currentPrice={prices[selectedSymbol]?.price}
+                  height={isMobile ? 300 : 400}
+                />
               )}
             </div>
           </div>
@@ -1089,7 +896,7 @@ const SnipSwapDEX = () => {
               <span>Loaded Prices: {Object.keys(prices).length}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <span>Powered by TradingView • CoinGecko • DeFiLlama</span>
+              <span>Powered by Chart.js • CoinGecko • DeFiLlama</span>
               <span>© 2025 SnipSwap</span>
             </div>
           </div>
